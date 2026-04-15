@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - Monitoramento de Temperatura</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+</head>
+<body class="pagina-cadastro">
+    <main class="container-cadastro">
+        <div class="cartao-cadastro">
+            <h1 class="titulo-cadastro">Criar Conta</h1>
+            <form class="formulario-cadastro" id="formularioCadastro">
+                <div class="grupo-campo">
+                    <label for="nomeCompleto" class="rotulo-campo">Nome Completo:</label>
+                    <input type="text" id="nomeCompleto" name="nomeCompleto" class="entrada-campo" placeholder="Digite seu nome completo" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="email" class="rotulo-campo">Email:</label>
+                    <input type="email" id="email" name="email" class="entrada-campo" placeholder="exemplo@dominio.com" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="senhaCadastro" class="rotulo-campo">Senha:</label>
+                    <input type="password" id="senhaCadastro" name="senha" class="entrada-campo" placeholder="Digite sua senha" required>
+                </div>
+                <div class="grupo-campo">
+                    <label for="confirmarSenha" class="rotulo-campo">Confirmar Senha:</label>
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" class="entrada-campo" placeholder="Confirme sua senha" required>
+                </div>
+                <div class="acoes-formulario">
+                    <button type="submit" class="botao-primario" id="botaoCadastrar">Cadastrar</button>
+                </div>
+                <div class="links-auxiliares">
+                    <a href="../index.html" class="link-ja-possui-conta">Já possuo uma Conta</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="../js/cadastro.js"></script>
+</body>
+</html>

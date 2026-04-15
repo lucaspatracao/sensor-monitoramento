@@ -1,0 +1,122 @@
+[
+  {
+    "temperatura": 23.5,
+    "datahora": "2026-04-14T08:00:00.000Z"
+  },
+  {
+    "temperatura": 23.8,
+    "datahora": "2026-04-14T08:05:00.000Z"
+  },
+  {
+    "temperatura": 24.1,
+    "datahora": "2026-04-14T08:10:00.000Z"
+  },
+  {
+    "temperatura": 24.6,
+    "datahora": "2026-04-14T08:15:00.000Z"
+  },
+  {
+    "temperatura": 25.0,
+    "datahora": "2026-04-14T08:20:00.000Z"
+  },
+  {
+    "temperatura": 25.3,
+    "datahora": "2026-04-14T08:25:00.000Z"
+  },
+  {
+    "temperatura": 25.7,
+    "datahora": "2026-04-14T08:30:00.000Z"
+  },
+  {
+    "temperatura": 26.0,
+    "datahora": "2026-04-14T08:35:00.000Z"
+  },
+  {
+    "temperatura": 26.4,
+    "datahora": "2026-04-14T08:40:00.000Z"
+  },
+  {
+    "temperatura": 26.8,
+    "datahora": "2026-04-14T08:45:00.000Z"
+  },
+  {
+    "temperatura": 27.1,
+    "datahora": "2026-04-14T08:50:00.000Z"
+  },
+  {
+    "temperatura": 27.5,
+    "datahora": "2026-04-14T08:55:00.000Z"
+  },
+  {
+    "temperatura": 27.9,
+    "datahora": "2026-04-14T09:00:00.000Z"
+  },
+  {
+    "temperatura": 28.2,
+    "datahora": "2026-04-14T09:05:00.000Z"
+  },
+  {
+    "temperatura": 28.6,
+    "datahora": "2026-04-14T09:10:00.000Z"
+  },
+  {
+    "temperatura": 29.0,
+    "datahora": "2026-04-14T09:15:00.000Z"
+  },
+  {
+    "temperatura": 29.3,
+    "datahora": "2026-04-14T09:20:00.000Z"
+  },
+  {
+    "temperatura": 29.7,
+    "datahora": "2026-04-14T09:25:00.000Z"
+  },
+  {
+    "temperatura": 30.0,
+    "datahora": "2026-04-14T09:30:00.000Z"
+  },
+  {
+    "temperatura": 30.4,
+    "datahora": "2026-04-14T09:35:00.000Z"
+  },
+  {
+    "temperatura": 30.6,
+    "datahora": "2026-04-14T09:40:00.000Z"
+  },
+  {
+    "temperatura": 30.9,
+    "datahora": "2026-04-14T09:45:00.000Z"
+  },
+  {
+    "temperatura": 31.2,
+    "datahora": "2026-04-14T09:50:00.000Z"
+  },
+  {
+    "temperatura": 31.5,
+    "datahora": "2026-04-14T09:55:00.000Z"
+  },
+  {
+    "temperatura": 31.8,
+    "datahora": "2026-04-14T10:00:00.000Z"
+  },
+  {
+    "temperatura": 32.0,
+    "datahora": "2026-04-14T10:05:00.000Z"
+  },
+  {
+    "temperatura": 32.3,
+    "datahora": "2026-04-14T10:10:00.000Z"
+  },
+  {
+    "temperatura": 32.5,
+    "datahora": "2026-04-14T10:15:00.000Z"
+  },
+  {
+    "temperatura": 32.8,
+    "datahora": "2026-04-14T10:20:00.000Z"
+  },
+  {
+    "temperatura": 33.0,
+    "datahora": "2026-04-14T10:25:00.000Z"
+  }
+]

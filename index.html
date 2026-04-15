@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acessar - Monitoramento de Temperatura</title>
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="pagina-login">
+    <main class="container-login">
+        <div class="cartao-login">
+            <h1 class="titulo-login">Acessar</h1>
+            <p class="subtitulo-login">Faça seu Login para acessar o Sistema</p>
+
+            <form class="formulario-login" id="formularioLogin">
+                <div class="grupo-campo">
+                    <label for="usuario" class="rotulo-campo">Usuário:</label>
+                    <input type="text" id="usuario" name="usuario" class="entrada-campo" placeholder="Digite seu usuário" required autofocus>
+                </div>
+                <div class="grupo-campo">
+                    <label for="senha" class="rotulo-campo">Senha:</label>
+                    <input type="password" id="senha" name="senha" class="entrada-campo" placeholder="Digite sua senha" required>
+                </div>
+                <div class="acoes-formulario">
+                    <button type="submit" class="botao-primario" id="botaoEntrar">Entrar</button>
+                </div>
+                <div class="links-auxiliares">
+                    <a href="html/recuperar-senha.html" class="link-esqueci-senha">Esqueci minha Senha</a>
+                    <span class="separador">|</span>
+                    <a href="html/cadastro.html" class="link-cadastro">Cadastre-se</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="js/login.js"></script>
+</body>
+</html>

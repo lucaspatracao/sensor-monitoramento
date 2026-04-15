@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha - Monitoramento de Temperatura</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/recuperar-senha.css">
+</head>
+<body class="pagina-recuperar-senha">
+    <main class="container-recuperar-senha">
+        <div class="cartao-recuperar-senha">
+            <h1 class="titulo-recuperar-senha">Acessar</h1>
+            <p class="subtitulo-recuperar-senha">Recupere sua Senha</p>
+            <form class="formulario-recuperar-senha" id="formularioRecuperarSenha">
+                <div class="grupo-campo">
+                    <label for="emailRecuperacao" class="rotulo-campo">Email de Recuperação:</label>
+                    <input type="email" id="emailRecuperacao" name="email" class="entrada-campo" placeholder="exemplo@dominio.com" required>
+                </div>
+                <div class="acoes-formulario">
+                    <button type="submit" class="botao-primario" id="botaoEnviar">Enviar</button>
+                </div>
+                <div class="links-auxiliares">
+                    <a href="../index.html" class="link-voltar-login">Voltar para o Login</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="../js/recuperar-senha.js"></script>
+</body>
+</html>

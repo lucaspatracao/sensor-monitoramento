@@ -1,0 +1,467 @@
+/* =========================================
+   ESTILO GLOBAL - MONITORAMENTO DE TEMPERATURA
+   ========================================= */
+
+/* ----- RESET E CONFIGURAÇÕES BÁSICAS ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Paleta de Cores */
+    --cor-primaria: #2563eb;       /* Azul moderno */
+    --cor-primaria-escura: #1e40af;
+    --cor-primaria-clara: #dbeafe;
+    --cor-secundaria: #f97316;     /* Laranja para destaques */
+    --cor-sucesso: #10b981;
+    --cor-erro: #ef4444;
+    --cor-texto: #1e293b;
+    --cor-texto-suave: #64748b;
+    --cor-fundo: #f8fafc;
+    --cor-branca: #ffffff;
+    --cor-borda: #e2e8f0;
+
+    /* Tipografia */
+    --fonte-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    /* Espaçamentos */
+    --espaco-xs: 4px;
+    --espaco-sm: 8px;
+    --espaco-md: 16px;
+    --espaco-lg: 24px;
+    --espaco-xl: 32px;
+    --espaco-2xl: 48px;
+
+    /* Bordas e Sombras */
+    --borda-arredondada: 12px;
+    --borda-arredondada-media: 8px;
+    --borda-arredondada-pequena: 4px;
+    --sombra-suave: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --sombra-media: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+body {
+    font-family: var(--fonte-principal);
+    color: var(--cor-texto);
+    background-color: var(--cor-fundo);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ----- TIPOGRAFIA ----- */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: var(--espaco-md);
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+a {
+    color: var(--cor-primaria);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--cor-primaria-escura);
+    text-decoration: underline;
+}
+
+/* ----- UTILITÁRIOS ----- */
+.visivel {
+    display: block !important;
+}
+
+.oculto {
+    display: none !important;
+}
+
+.texto-centro {
+    text-align: center;
+}
+
+.texto-erro {
+    color: var(--cor-erro);
+    font-size: 0.875rem;
+    margin-top: var(--espaco-xs);
+}
+
+/* ----- LAYOUT BASE PARA PÁGINAS DE AUTENTICAÇÃO (LOGIN/CADASTRO/RECUPERAÇÃO) ----- */
+.pagina-login,
+.pagina-cadastro,
+.pagina-recuperar-senha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: var(--espaco-lg);
+}
+
+.container-login,
+.container-cadastro,
+.container-recuperar-senha {
+    width: 100%;
+    max-width: 420px;
+}
+
+.cartao-login,
+.cartao-cadastro,
+.cartao-recuperar-senha {
+    background-color: var(--cor-branca);
+    padding: var(--espaco-xl);
+    border-radius: var(--borda-arredondada);
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-borda);
+}
+
+.titulo-login,
+.titulo-cadastro,
+.titulo-recuperar-senha {
+    text-align: center;
+    margin-bottom: var(--espaco-xs);
+    color: var(--cor-texto);
+}
+
+.subtitulo-login,
+.subtitulo-recuperar-senha {
+    text-align: center;
+    color: var(--cor-texto-suave);
+    margin-bottom: var(--espaco-lg);
+    font-size: 0.95rem;
+}
+
+/* ----- FORMULÁRIOS (GERAL) ----- */
+.formulario-login,
+.formulario-cadastro,
+.formulario-recuperar-senha {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-md);
+}
+
+.grupo-campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-xs);
+}
+
+.rotulo-campo {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--cor-texto);
+}
+
+.entrada-campo {
+    padding: var(--espaco-sm) var(--espaco-md);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--borda-arredondada-media);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.entrada-campo:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px var(--cor-primaria-clara);
+}
+
+.entrada-campo::placeholder {
+    color: var(--cor-texto-suave);
+    opacity: 0.7;
+}
+
+/* ----- BOTÕES ----- */
+.botao-primario,
+.botao-secundario {
+    display: inline-block;
+    padding: var(--espaco-sm) var(--espaco-lg);
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: var(--borda-arredondada-media);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    text-align: center;
+    font-family: inherit;
+}
+
+.botao-primario {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: 1px solid var(--cor-primaria);
+}
+
+.botao-primario:hover {
+    background-color: var(--cor-primaria-escura);
+    text-decoration: none;
+}
+
+.botao-secundario {
+    background-color: transparent;
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-primaria);
+}
+
+.botao-secundario:hover {
+    background-color: var(--cor-primaria-clara);
+    text-decoration: none;
+}
+
+.acoes-formulario {
+    margin-top: var(--espaco-sm);
+    display: flex;
+    justify-content: center;
+}
+
+.acoes-formulario .botao-primario {
+    width: 100%;
+}
+
+/* ----- LINKS AUXILIARES (LOGIN/CADASTRO) ----- */
+.links-auxiliares {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--espaco-sm);
+    margin-top: var(--espaco-lg);
+    font-size: 0.9rem;
+}
+
+.link-esqueci-senha,
+.link-cadastro,
+.link-ja-possui-conta,
+.link-voltar-login {
+    color: var(--cor-texto-suave);
+}
+
+.link-esqueci-senha:hover,
+.link-cadastro:hover,
+.link-ja-possui-conta:hover,
+.link-voltar-login:hover {
+    color: var(--cor-primaria);
+}
+
+.separador {
+    color: var(--cor-borda);
+}
+
+/* ----- CABEÇALHO DAS PÁGINAS INTERNAS (DASHBOARD/HISTÓRICO) ----- */
+.estrutura-dashboard,
+.estrutura-historico {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.cabecalho-dashboard,
+.cabecalho-historico {
+    background-color: var(--cor-branca);
+    border-bottom: 1px solid var(--cor-borda);
+    padding: var(--espaco-md) var(--espaco-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-shadow: var(--sombra-suave);
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--cor-primaria);
+    letter-spacing: -0.5px;
+}
+
+/* ----- MENU DE NAVEGAÇÃO ----- */
+.navegacao-principal .menu-navegacao {
+    display: flex;
+    list-style: none;
+    gap: var(--espaco-lg);
+}
+
+.item-menu .link-menu {
+    color: var(--cor-texto);
+    font-weight: 500;
+    padding: var(--espaco-xs) 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.item-menu .link-menu:hover {
+    color: var(--cor-primaria);
+    text-decoration: none;
+}
+
+.item-menu.ativo .link-menu {
+    color: var(--cor-primaria);
+    border-bottom-color: var(--cor-primaria);
+}
+
+.link-menu.sair {
+    color: var(--cor-erro);
+}
+
+.link-menu.sair:hover {
+    color: var(--cor-erro);
+    border-bottom-color: var(--cor-erro);
+}
+
+/* ----- CONTEÚDO PRINCIPAL DASHBOARD/HISTÓRICO ----- */
+.conteudo-dashboard,
+.conteudo-historico {
+    flex: 1;
+    padding: var(--espaco-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.titulo-pagina {
+    margin-bottom: var(--espaco-lg);
+    font-size: 1.8rem;
+}
+
+/* ----- CARTÕES (DASHBOARD/HISTÓRICO) ----- */
+.cartao {
+    background-color: var(--cor-branca);
+    border-radius: var(--borda-arredondada);
+    padding: var(--espaco-lg);
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    margin-bottom: var(--espaco-lg);
+}
+
+.titulo-cartao {
+    margin-bottom: var(--espaco-md);
+    font-size: 1.2rem;
+    color: var(--cor-texto);
+}
+
+/* ----- TABELA (HISTÓRICO) ----- */
+.container-tabela {
+    overflow-x: auto;
+}
+
+.tabela-historico {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tabela-historico th {
+    text-align: left;
+    padding: var(--espaco-md);
+    background-color: var(--cor-fundo);
+    font-weight: 600;
+    border-bottom: 2px solid var(--cor-borda);
+}
+
+.tabela-historico td {
+    padding: var(--espaco-md);
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.tabela-historico tbody tr:hover {
+    background-color: var(--cor-fundo);
+}
+
+.linha-placeholder td {
+    text-align: center;
+    color: var(--cor-texto-suave);
+    padding: var(--espaco-xl);
+}
+
+/* ----- FILTROS (HISTÓRICO) ----- */
+.cartao-filtros .formulario-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--espaco-lg);
+}
+
+.grupo-filtro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-xs);
+    min-width: 200px;
+}
+
+.acoes-filtro {
+    display: flex;
+    gap: var(--espaco-md);
+}
+
+/* ----- LINK VOLTAR (HISTÓRICO) ----- */
+.link-voltar-dashboard {
+    display: inline-block;
+    margin-bottom: var(--espaco-lg);
+    color: var(--cor-texto-suave);
+    font-weight: 500;
+}
+
+.link-voltar-dashboard:hover {
+    color: var(--cor-primaria);
+}
+
+/* ----- VALOR TEMPERATURA ATUAL (DASHBOARD) ----- */
+.cartao-temperatura-atual {
+    display: inline-block;
+    min-width: 250px;
+}
+
+.valor-temperatura {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--cor-secundaria);
+    line-height: 1;
+}
+
+/* ----- GRÁFICO (DASHBOARD) ----- */
+.cartao-grafico {
+    width: 100%;
+}
+
+.container-grafico {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* ----- AÇÕES DASHBOARD ----- */
+.acoes-dashboard {
+    margin-top: var(--espaco-lg);
+}
+
+/* ----- RESPONSIVIDADE ----- */
+@media (max-width: 768px) {
+    .cabecalho-dashboard,
+    .cabecalho-historico {
+        flex-direction: column;
+        gap: var(--espaco-md);
+    }
+
+    .cartao-filtros .formulario-filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grupo-filtro {
+        min-width: auto;
+    }
+
+    .valor-temperatura {
+        font-size: 3rem;
+    }
+}

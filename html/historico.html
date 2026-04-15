@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico - Monitoramento de Temperatura</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/historico.css">
+</head>
+<body class="pagina-historico">
+    <div class="estrutura-historico">
+        <header class="cabecalho-historico">
+            <div class="logo">LOGO</div>
+            <nav class="navegacao-principal">
+                <ul class="menu-navegacao">
+                    <li class="item-menu"><a href="dashboard.html" class="link-menu">Dashboard</a></li>
+                    <li class="item-menu ativo"><a href="historico.html" class="link-menu">Histórico</a></li>
+                    <li class="item-menu"><a href="../index.html" class="link-menu sair">Sair</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="conteudo-historico">
+            <a href="dashboard.html" class="link-voltar-dashboard">&lt; Voltar ao Dashboard</a>
+            <h1 class="titulo-pagina">Histórico de Leituras</h1>
+            <section class="cartao cartao-filtros">
+                <form class="formulario-filtros" id="formularioFiltros">
+                    <div class="grupo-filtro">
+                        <label for="dataInicio" class="rotulo-campo">De:</label>
+                        <input type="datetime-local" id="dataInicio" name="dataInicio" class="entrada-campo">
+                    </div>
+                    <div class="grupo-filtro">
+                        <label for="dataFim" class="rotulo-campo">Até:</label>
+                        <input type="datetime-local" id="dataFim" name="dataFim" class="entrada-campo">
+                    </div>
+                    <div class="acoes-filtro">
+                        <button type="submit" class="botao-primario" id="botaoFiltrar">Filtrar</button>
+                        <button type="reset" class="botao-secundario" id="botaoLimparFiltros">Limpar</button>
+                    </div>
+                </form>
+            </section>
+            <section class="cartao cartao-tabela-historico">
+                <h2 class="titulo-cartao">Leituras Registradas</h2>
+                <div class="container-tabela">
+                    <table class="tabela-historico" id="tabelaHistorico">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Temperatura (°C)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaHistorico">
+                            <tr class="linha-placeholder">
+                                <td colspan="2">Nenhuma leitura encontrada.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="../js/historico.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoramento de Temperatura</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="pagina-dashboard">
+    <div class="estrutura-dashboard">
+        <header class="cabecalho-dashboard">
+            <div class="logo">LOGO</div>
+            <nav class="navegacao-principal">
+                <ul class="menu-navegacao">
+                    <li class="item-menu ativo"><a href="dashboard.html" class="link-menu">Dashboard</a></li>
+                    <li class="item-menu"><a href="historico.html" class="link-menu">Histórico</a></li>
+                    <li class="item-menu"><a href="../index.html" class="link-menu sair">Sair</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="conteudo-dashboard">
+            <h1 class="titulo-pagina">Monitoramento de Temperatura</h1>
+            <section class="cartao cartao-temperatura-atual">
+                <h2 class="titulo-cartao">Temperatura Atual:</h2>
+                <p class="valor-temperatura" id="valorTemperaturaAtual">-- °C</p>
+            </section>
+            <section class="cartao cartao-grafico">
+                <h2 class="titulo-cartao">Evolução da Temperatura</h2>
+                <div class="container-grafico">
+                    <canvas id="graficoTemperatura" width="800" height="400"></canvas>
+                </div>
+            </section>
+            <div class="acoes-dashboard">
+                <a href="historico.html" class="botao-secundario" id="botaoVerHistorico">Histórico</a>
+            </div>
+        </main>
+    </div>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

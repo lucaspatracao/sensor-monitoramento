@@ -1,0 +1,47 @@
+/* Estilos específicos para a página de Histórico */
+
+.conteudo-historico {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-md);
+}
+
+/* Ajustes nos filtros */
+.cartao-filtros {
+    background-color: var(--cor-branca);
+    padding: var(--espaco-lg);
+}
+
+/* Estilo para os inputs de data */
+.entrada-campo[type="datetime-local"] {
+    font-family: inherit;
+}
+
+/* Ações do filtro alinhadas à direita em telas grandes */
+.acoes-filtro {
+    margin-left: auto;
+}
+
+/* Tabela com linhas zebradas para melhor legibilidade */
+.tabela-historico tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+/* Responsividade extra para tabela */
+@media (max-width: 640px) {
+    .tabela-historico th,
+    .tabela-historico td {
+        padding: var(--espaco-sm);
+        font-size: 0.8rem;
+    }
+
+    .acoes-filtro {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .acoes-filtro .botao-primario,
+    .acoes-filtro .botao-secundario {
+        flex: 1;
+    }
+}
