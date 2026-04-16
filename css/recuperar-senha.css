@@ -1,7 +1,8 @@
 /* Estilos específicos para a página de Recuperação de Senha */
 
 .pagina-recuperar-senha {
-    background: linear-gradient(135deg, var(--cor-primaria-clara) 0%, var(--cor-fundo) 100%);
+    /* Fundo sólido, sem gradiente */
+    background-color: var(--cor-fundo);
 }
 
 .cartao-recuperar-senha {

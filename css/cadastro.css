@@ -1,7 +1,8 @@
 /* Estilos específicos para a página de Cadastro (Criar Conta) */
 
 .pagina-cadastro {
-    background: linear-gradient(135deg, var(--cor-primaria-clara) 0%, var(--cor-fundo) 100%);
+    /* Fundo sólido, sem gradiente */
+    background-color: var(--cor-fundo);
 }
 
 .cartao-cadastro {

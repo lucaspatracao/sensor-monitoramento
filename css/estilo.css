@@ -11,10 +11,10 @@
 
 :root {
     /* Paleta de Cores */
-    --cor-primaria: #2563eb;       /* Azul moderno */
+    --cor-primaria: #2563eb;
     --cor-primaria-escura: #1e40af;
     --cor-primaria-clara: #dbeafe;
-    --cor-secundaria: #f97316;     /* Laranja para destaques */
+    --cor-secundaria: #f97316;
     --cor-sucesso: #10b981;
     --cor-erro: #ef4444;
     --cor-texto: #1e293b;
@@ -53,7 +53,12 @@ body {
 }
 
 /* ----- TIPOGRAFIA ----- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-weight: 600;
     line-height: 1.2;
     margin-bottom: var(--espaco-md);
@@ -106,23 +111,70 @@ a:hover {
     justify-content: center;
     min-height: 100vh;
     padding: var(--espaco-lg);
+    background-color: var(--cor-fundo);
+    /* fundo sólido, sem gradiente */
 }
 
 .container-login,
 .container-cadastro,
 .container-recuperar-senha {
     width: 100%;
-    max-width: 420px;
+    max-width: 900px;
 }
 
-.cartao-login,
-.cartao-cadastro,
-.cartao-recuperar-senha {
+/* Wrapper para logo + formulário nas páginas de autenticação */
+.cartao-login-wrapper,
+.cartao-cadastro-wrapper,
+.cartao-recuperar-senha-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--espaco-xl);
     background-color: var(--cor-branca);
     padding: var(--espaco-xl);
     border-radius: var(--borda-arredondada);
     box-shadow: var(--sombra-media);
     border: 1px solid var(--cor-borda);
+    flex-wrap: wrap;
+}
+
+/* Logo ao lado do formulário */
+.logo-login,
+.logo-cadastro,
+.logo-recuperar-senha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 150px;
+}
+
+.imagem-logo-login,
+.imagem-logo-cadastro,
+.imagem-logo-recuperar-senha {
+    width: 120px;
+    height: auto;
+    margin-bottom: var(--espaco-sm);
+}
+
+.texto-logo-login,
+.texto-logo-cadastro,
+.texto-logo-recuperar-senha {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--cor-primaria);
+}
+
+/* Cartões de formulário mantêm tamanho fixo */
+.cartao-login,
+.cartao-cadastro,
+.cartao-recuperar-senha {
+    flex: 1;
+    min-width: 320px;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
 }
 
 .titulo-login,
@@ -258,13 +310,6 @@ a:hover {
 }
 
 /* ----- CABEÇALHO DAS PÁGINAS INTERNAS (DASHBOARD/HISTÓRICO) ----- */
-.estrutura-dashboard,
-.estrutura-historico {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
 .cabecalho-dashboard,
 .cabecalho-historico {
     background-color: var(--cor-branca);
@@ -275,25 +320,45 @@ a:hover {
     justify-content: space-between;
     flex-wrap: wrap;
     box-shadow: var(--sombra-suave);
+    min-height: 90px;
 }
 
-.logo {
+/* Container da logo (imagem + texto) */
+.container-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-md);
+}
+
+.imagem-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+}
+
+.texto-logo {
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: var(--cor-primaria);
     letter-spacing: -0.5px;
+}
+
+/* Remove estilo antigo de .logo se existir */
+.logo {
+    display: none;
 }
 
 /* ----- MENU DE NAVEGAÇÃO ----- */
 .navegacao-principal .menu-navegacao {
     display: flex;
     list-style: none;
-    gap: var(--espaco-lg);
+    gap: var(--espaco-xl);
 }
 
 .item-menu .link-menu {
     color: var(--cor-texto);
     font-weight: 500;
+    font-size: 1.25rem;
     padding: var(--espaco-xs) 0;
     border-bottom: 2px solid transparent;
     transition: color 0.2s, border-color 0.2s;
@@ -444,12 +509,192 @@ a:hover {
     margin-top: var(--espaco-lg);
 }
 
+/* ----- FOOTER SIMPLES ----- */
+.rodape {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espaco-sm);
+    background-color: var(--cor-branca);
+    border-top: 1px solid var(--cor-borda);
+    padding: var(--espaco-md) var(--espaco-xl);
+    text-align: center;
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+.rodape p {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+}
+
+.rodape .separador {
+    color: var(--cor-borda);
+    user-select: none;
+}
+
+.redes-sociais {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+}
+
+.redes-sociais a {
+    color: var(--cor-texto-suave);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.redes-sociais a:hover {
+    color: var(--cor-primaria);
+}
+
+/* ===== BOTÃO DARK MODE FIXO ===== */
+.botao-dark-mode {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: var(--cor-branca);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+    border-radius: 40px;
+    box-shadow: var(--sombra-media);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.botao-dark-mode:hover {
+    background-color: var(--cor-fundo);
+    border-color: var(--cor-texto-suave);
+}
+
+.botao-dark-mode svg {
+    fill: currentColor;
+}
+
+/* Ajuste para quando o footer existir: sobe um pouco mais */
+.pagina-dashboard .botao-dark-mode,
+.pagina-historico .botao-dark-mode {
+    bottom: 90px;
+}
+
+/* ===== MODO ESCURO ===== */
+body.modo-escuro {
+    --cor-branca: #1e1e1e;
+    --cor-fundo: #121212;
+    --cor-texto: #e0e0e0;
+    --cor-texto-suave: #a0a0a0;
+    --cor-borda: #333333;
+}
+
+/* Ajustes específicos para elementos que usam fundo branco */
+body.modo-escuro .cartao,
+body.modo-escuro .cartao-login,
+body.modo-escuro .cartao-cadastro,
+body.modo-escuro .cartao-recuperar-senha,
+body.modo-escuro .cabecalho-dashboard,
+body.modo-escuro .cabecalho-historico,
+body.modo-escuro .rodape {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+
+/* Cartões de leitura no dashboard - fundo sólido no modo escuro */
+body.modo-escuro .cartao-temperatura-atual,
+body.modo-escuro .cartao-umidade-atual {
+    background-color: #1e1e1e;
+    border-left-width: 6px;
+    border-left-style: solid;
+}
+
+body.modo-escuro .cartao-temperatura-atual {
+    border-left-color: var(--cor-secundaria);
+}
+
+body.modo-escuro .cartao-umidade-atual {
+    border-left-color: #0ea5e9;
+}
+
+/* Tabela no histórico */
+body.modo-escuro .tabela-historico th {
+    background-color: #2a2a2a;
+}
+
+body.modo-escuro .tabela-historico tbody tr:hover {
+    background-color: #2a2a2a;
+}
+
+body.modo-escuro .tabela-historico tbody tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+/* Inputs e botões mantêm legibilidade */
+body.modo-escuro .entrada-campo {
+    background-color: #2a2a2a;
+    color: var(--cor-texto);
+    border-color: #444;
+}
+
+body.modo-escuro .entrada-campo:focus {
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+/* Botão dark mode no modo escuro */
+body.modo-escuro .botao-dark-mode {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.modo-escuro .botao-dark-mode:hover {
+    background-color: #3a3a3a;
+}
+
 /* ----- RESPONSIVIDADE ----- */
 @media (max-width: 768px) {
+
+    .cartao-login-wrapper,
+    .cartao-cadastro-wrapper,
+    .cartao-recuperar-senha-wrapper {
+        flex-direction: column;
+        padding: var(--espaco-lg);
+    }
+
     .cabecalho-dashboard,
     .cabecalho-historico {
         flex-direction: column;
         gap: var(--espaco-md);
+        align-items: flex-start;
+    }
+
+    .container-logo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .navegacao-principal .menu-navegacao {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .texto-logo {
+        font-size: 1.6rem;
     }
 
     .cartao-filtros .formulario-filtros {

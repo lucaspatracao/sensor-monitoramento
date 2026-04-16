@@ -1,6 +1,22 @@
 /* Estilos específicos para a página de Histórico */
 
+/* Garante que o body ocupe toda a altura e use flex */
+.pagina-historico {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* A estrutura principal cresce para empurrar o footer para baixo */
+.estrutura-historico {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* O conteúdo principal ocupa o espaço disponível */
 .conteudo-historico {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: var(--espaco-md);
@@ -22,13 +38,44 @@
     margin-left: auto;
 }
 
-/* Tabela com linhas zebradas para melhor legibilidade */
+/* Tabela com 4 colunas */
+.tabela-historico {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tabela-historico th {
+    text-align: left;
+    padding: var(--espaco-md);
+    background-color: var(--cor-fundo);
+    font-weight: 600;
+    border-bottom: 2px solid var(--cor-borda);
+}
+
+.tabela-historico td {
+    padding: var(--espaco-md);
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.tabela-historico tbody tr:hover {
+    background-color: var(--cor-fundo);
+}
+
+.linha-placeholder td {
+    text-align: center;
+    color: var(--cor-texto-suave);
+    padding: var(--espaco-xl);
+}
+
+/* Linhas zebradas */
 .tabela-historico tbody tr:nth-child(even) {
     background-color: #f9fafb;
 }
 
 /* Responsividade extra para tabela */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+
     .tabela-historico th,
     .tabela-historico td {
         padding: var(--espaco-sm);
