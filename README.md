@@ -247,4 +247,14 @@ Este projeto foi desenvolvido para fins educacionais como parte da **Situação 
 
 ---
 
-**Desenvolvido por Lucas Patracão, Samuel Santana e Rafael Rubia - equipe Sensora – 2026**
+## 👥 Desenvolvido por
+
+| Membro | Redes Sociais |
+|:------:|:-------------:|
+| **Lucas Patracão** | [![Instagram](https://img.shields.io/badge/Instagram-@lnpatracao-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/lnpatracao) |
+| **Rafael Rubiá** | [![Instagram](https://img.shields.io/badge/Instagram-@rafa_rubia7-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/rafa_rubia7) |
+| **Samuel Santana** | [![Instagram](https://img.shields.io/badge/Instagram-@_samusantana_-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/_samusantana_) |
+
+**Equipe Sensora © 2026**
+
+---
