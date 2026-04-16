@@ -241,32 +241,6 @@ Caso o backend ainda não esteja pronto, utilize o arquivo `dados/leituras_mock.
 
 ---
 
-## 📸 Capturas de Tela
-
-### 🔓 Tela de Login
-![Login](docs/screenshots/login.png)
-
-### 📊 Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-
-### 📜 Histórico
-![Histórico](docs/screenshots/historico.png)
-
-### 🌙 Modo Escuro
-![Dark Mode](docs/screenshots/darkmode.png)
-
-> *As imagens acima são ilustrativas. Substitua pelos screenshots reais do seu projeto.*
-
-## 👥 Equipe de Desenvolvimento
-
-| Nome | Função | Responsabilidades |
-|------|--------|-------------------|
-| **Membro 1** | Backend & Banco de Dados | Node‑RED, MySQL, API REST, Diagramas de Rede e BD |
-| **Membro 2** | Hardware & Comunicação | Arduino, sensor, comunicação serial, Fluxograma |
-| **Membro 3** | Frontend & UX/UI | HTML, CSS, JavaScript, Figma, Diagrama de Caso de Uso |
-
----
-
 ## 📄 Licença
 
 Este projeto foi desenvolvido para fins educacionais como parte da **Situação de Aprendizagem Integrada**. Sinta‑se à vontade para estudar, modificar e adaptar o código conforme necessário.
