@@ -21,23 +21,6 @@ Bem‑vindo ao repositório do **Sensora**, um sistema completo de monitoramento
 
 ---
 
-## 📋 Sumário
-
-- [Visão Geral](#-visão-geral)
-- [Objetivos da Atividade](#-objetivos-da-atividade)
-- [Arquitetura do Sistema](#-arquitetura-do-sistema)
-- [Funcionalidades](#-funcionalidades)
-- [Entregáveis Obrigatórios](#-entregáveis-obrigatórios)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Guia de Instalação e Execução](#-guia-de-instalação-e-execução)
-- [Capturas de Tela](#-capturas-de-tela)
-- [Links Úteis](#-links-úteis)
-- [Equipe de Desenvolvimento](#-equipe-de-desenvolvimento)
-- [Licença](#-licença)
-
----
-
 ## 🌐 Visão Geral
 
 O **Sensora** é uma solução de monitoramento que coleta dados ambientais (temperatura e umidade) por meio de sensores conectados a uma placa **Arduino**. Os dados são transmitidos via comunicação serial (USB) para um servidor que executa o **Node‑RED**, responsável por processar as informações e armazená‑las em um banco de dados **MySQL**. Uma interface web desenvolvida com **HTML, CSS e JavaScript** consome uma API REST fornecida pelo Node‑RED e exibe os dados em dashboards interativos e históricos detalhados.
@@ -207,8 +190,8 @@ raiz_do_projeto/
 ### 1. Clone o Repositório
 
 ```bash
-git clone https://github.com/seu-usuario/sensora-monitoramento.git
-cd sensora-monitoramento
+git clone https://github.com/lucaspatracao/sensor-monitoramento.git
+cd sensor-monitoramento
 ```
 
 ### 2. Configure o Servidor (Membro 1)
@@ -234,10 +217,6 @@ cd sensora-monitoramento
    const URL_API = 'http://192.168.1.100:1880/api/leituras';
    ```
 3. Navegue pelas telas de login, dashboard e histórico.
-
-### 5. Testes com Dados Simulados (Opcional)
-
-Caso o backend ainda não esteja pronto, utilize o arquivo `dados/leituras_mock.json` alterando a `URL_API` para `../dados/leituras_mock.json` durante o desenvolvimento.
 
 ---
 
