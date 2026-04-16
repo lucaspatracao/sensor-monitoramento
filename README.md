@@ -247,4 +247,4 @@ Este projeto foi desenvolvido para fins educacionais como parte da **Situação 
 
 ---
 
-**Desenvolvido com 💙 pela equipe Sensora – 2026**
+**Desenvolvido por Lucas Patracão, Samuel Santana e Rafael Rubia - equipe Sensora – 2026**
