@@ -23,7 +23,7 @@ Bem‑vindo ao repositório do **Sensora**, um sistema completo de monitoramento
 
 ## 🌐 Visão Geral
 
-O **Sensora** é uma solução de monitoramento que coleta dados ambientais (temperatura e umidade) por meio de sensores conectados a uma placa **Arduino**. Os dados são transmitidos via comunicação serial (USB) para um servidor que executa o **Node‑RED**, responsável por processar as informações e armazená‑las em um banco de dados **MySQL**. Uma interface web desenvolvida com **HTML, CSS e JavaScript** consome uma API REST fornecida pelo Node‑RED e exibe os dados em dashboards interativos e históricos detalhados.
+O **Sensora** é uma solução de monitoramento que coleta dados ambientais (temperatura e umidade) por meio de um sensor DHT11 conectado a uma placa **Arduino Uno**. Os dados são transmitidos via comunicação serial (USB) a **115200 baud** para um servidor que executa o **Node‑RED**, responsável por processar as informações e armazená‑las em um banco de dados **MySQL** (banco `sensora_db`). Uma interface web desenvolvida com **HTML, CSS e JavaScript** consome uma API REST e um WebSocket fornecidos pelo Node‑RED e exibe os dados em dashboards interativos e históricos detalhados.
 
 O sistema foi projetado para ser executado em **três computadores distintos** (PC Servidor, PC Programador/Arduino e PC Cliente), simulando um ambiente industrial real onde aquisição, processamento e visualização ocorrem em máquinas separadas.
 
@@ -36,64 +36,23 @@ Conforme definido na **Situação de Aprendizagem Integrada**, o projeto atende 
 - [x] Aquisição de dados via sensor conectado à plataforma **Arduino**.
 - [x] Comunicação dos dados com o backend via **RS232 (USB emulada)**.
 - [x] Armazenamento em banco de dados **MySQL**.
-- [x] Processamento e disponibilização das informações via **API REST**.
+- [x] Processamento e disponibilização das informações via **API REST** e **WebSocket**.
 - [x] Visualização em **dashboards e interfaces web** responsivas.
 - [x] Documentação completa: **fluxograma, diagrama de rede, modelo de banco, caso de uso e protótipo**.
 
 ---
 
-## 🏗️ Arquitetura do Sistema
-
-O sistema é composto por dois módulos principais, conforme ilustrado abaixo:
-
-```
-┌─────────────────┐     (USB/Serial)     ┌──────────────────────────────┐
-│   Arduino Uno   │ ──────────────────▶ │      PC Servidor              │
-│   + Sensor DHT  │                     │                              │
-└─────────────────┘                     │  ┌─────────────────────────┐ │
-                                        │  │       Node‑RED          │ │
-                                        │  │  • Serial In            │ │
-                                        │  │  • Function (Parse)     │ │
-                                        │  │  • MySQL (Insert/Select)│ │
-                                        │  │  • HTTP Endpoints       │ │
-                                        │  └───────────┬─────────────┘ │
-                                        │              │               │
-                                        │  ┌───────────▼─────────────┐ │
-                                        │  │   MySQL Database        │ │
-                                        │  │   sensor.leitura        │ │
-                                        │  └─────────────────────────┘ │
-                                        └──────────────┬───────────────┘
-                                                       │ HTTP (JSON)
-                                                       ▼
-                                        ┌──────────────────────────────┐
-                                        │       PC Cliente             │
-                                        │                              │
-                                        │  ┌─────────────────────────┐ │
-                                        │  │   Interface Web         │ │
-                                        │  │  • Login / Cadastro     │ │
-                                        │  │  • Dashboard            │ │
-                                        │  │  • Histórico            │ │
-                                        │  │  • Modo Escuro          │ │
-                                        │  └─────────────────────────┘ │
-                                        └──────────────────────────────┘
-```
-
-- **Módulo 1 (Servidor):** Executa o Node‑RED, recebe os dados seriais do Arduino, processa e armazena no MySQL, e expõe endpoints HTTP para consulta.
-- **Módulo 2 (Cliente):** Interface web pura (HTML, CSS, JavaScript) que consome a API e apresenta os dados em tempo real.
-
----
-
 ## ⚙️ Funcionalidades
 
-### 🔐 Autenticação (Opcional, mas implementada)
-- Tela de **Login** com validação de credenciais.
-- Tela de **Cadastro** para novos usuários.
-- Tela de **Recuperação de Senha** (simulada).
+### 🔐 Autenticação (implementada com API e banco de dados)
+- Tela de **Login** com validação de credenciais via API (`/api/login`).
+- Tela de **Cadastro** para novos usuários (`/api/cadastro`).
+- Tela de **Recuperação de Senha** que altera a senha diretamente no banco de dados (`/api/recuperar-senha`).
 
 ### 📊 Dashboard
 - Exibição em tempo real da **temperatura** e **umidade** atuais.
 - **Gráfico de linha** mostrando a evolução da temperatura nos últimos minutos.
-- Atualização automática a cada **5 segundos**.
+- Atualização automática via **WebSocket** (fallback para polling a cada 30 segundos).
 - Botão de atalho para acessar o **Histórico**.
 
 ### 📜 Histórico
@@ -116,10 +75,10 @@ O sistema é composto por dois módulos principais, conforme ilustrado abaixo:
 
 | # | Entregável | Descrição | Status |
 |---|------------|-----------|--------|
-| 1 | **Fluxograma do Hardware** | Representação do fluxo: Sensor → Arduino → Serial → Node‑RED. | ✅ Concluído |
+| 1 | **Fluxograma do Hardware** | Representação do fluxo: Sensor → Arduino → Serial → Node‑RED → MySQL → Frontend. | ✅ Concluído |
 | 2 | **Infraestrutura de Rede** | Diagrama com endereçamento IPv4, gateway e explicação do fluxo de comunicação. | ✅ Concluído |
-| 3 | **Diagrama do Banco de Dados** | Modelo lógico da tabela `leitura` (id, temperatura, umidade, datahora). | ✅ Concluído |
-| 4 | **Diagrama de Caso de Uso** | Ator "Operador" e casos de uso: Login, Visualizar Dashboard, Consultar Histórico. | ✅ Concluído |
+| 3 | **Diagrama do Banco de Dados** | Modelo lógico das tabelas `leituras` e `usuarios` (id, temperatura, umidade, datahora, etc.). | ✅ Concluído |
+| 4 | **Diagrama de Caso de Uso** | Ator "Usuário" e casos de uso: Login, Visualizar Dashboard, Consultar Histórico. | ✅ Concluído |
 | 5 | **Protótipo da Interface (Figma)** | Telas de Login, Cadastro, Dashboard e Histórico. | ✅ Concluído |
 
 ---
@@ -127,7 +86,7 @@ O sistema é composto por dois módulos principais, conforme ilustrado abaixo:
 ## 📁 Estrutura do Projeto
 
 ```
-raiz_do_projeto/
+sensor-monitoramento/
 │
 ├── index.html                     # Página de Login (única na raiz)
 ├── img/
@@ -147,16 +106,13 @@ raiz_do_projeto/
 │   ├── dashboard.css
 │   └── historico.css
 │
-├── js/                            # Scripts JavaScript
-│   ├── dark-mode.js               # Lógica do modo escuro
-│   ├── login.js
-│   ├── cadastro.js
-│   ├── recuperar-senha.js
-│   ├── dashboard.js               # Consome API e atualiza gráfico/valores
-│   └── historico.js               # Preenche tabela e gerencia filtros
-│
-└── dados/                         # Dados simulados para testes
-    └── leituras_mock.json
+└── js/                            # Scripts JavaScript
+    ├── dark-mode.js               # Lógica do modo escuro
+    ├── login.js
+    ├── cadastro.js
+    ├── recuperar-senha.js
+    ├── dashboard.js               # Consome API/WebSocket e atualiza gráfico/valores
+    └── historico.js               # Preenche tabela e gerencia filtros
 ```
 
 ---
@@ -166,19 +122,19 @@ raiz_do_projeto/
 ### Frontend
 - **HTML5** – Estrutura semântica das páginas.
 - **CSS3** – Estilização com Flexbox, Grid, variáveis e design responsivo.
-- **JavaScript (ES6+)** – Manipulação do DOM, requisições `fetch` (async/await), eventos e lógica de atualização em tempo real.
+- **JavaScript (ES6+)** – Manipulação do DOM, requisições `fetch` (async/await), WebSocket, eventos e lógica de atualização em tempo real.
 - **Chart.js** – Biblioteca para renderização de gráficos interativos.
 
 ### Backend e Infraestrutura
-- **Node‑RED** – Plataforma de integração para recepção de dados seriais, processamento e exposição de API REST.
-- **MySQL** – Banco de dados relacional para persistência das leituras.
+- **Node‑RED** – Plataforma de integração para recepção de dados seriais, processamento e exposição de API REST e WebSocket.
+- **MySQL** – Banco de dados relacional para persistência das leituras e usuários.
 - **Arduino IDE** – Programação do microcontrolador.
-- **Arduino Uno + Sensor DHT11/LM35** – Aquisição de dados de temperatura e umidade.
+- **Arduino Uno + Sensor DHT11** – Aquisição de dados de temperatura e umidade.
 
 ### Ferramentas de Apoio
 - **Figma** – Prototipação da interface.
-- **Draw.io / Lucidchart** – Criação dos diagramas UML e de rede.
-- **Git & GitHub** – Versionamento de código.
+- **Draw.io** – Criação dos diagramas UML e de rede.
+- **GitHub** – Versionamento de código.
 - **Google Drive** – Armazenamento e compartilhamento da documentação.
 
 ---
@@ -197,32 +153,29 @@ cd sensor-monitoramento
 ### 2. Configure o Servidor (Membro 1)
 
 1. Instale o **Node‑RED** e os nós complementares (`node-red-node-serialport`, `node-red-node-mysql`).
-2. Configure o nó `serial in` com a porta correta do Arduino e baud rate `9600`.
-3. Configure a conexão com o banco de dados `sensor` (tabela `leitura` com colunas `id`, `temperatura`, `umidade`, `datahora`).
-4. Importe o fluxo JSON (disponível na pasta `node-red-flow/`).
+2. Configure o nó `serial in` com a porta correta do Arduino (ex.: `COM7`) e **baud rate `115200`**.
+3. Configure a conexão com o banco de dados `sensora_db` (tabelas `leituras` e `usuarios`).
+4. Importe o fluxo JSON do Node‑RED (disponível nos arquivos do projeto).
 5. Habilite **CORS** no arquivo `settings.js` do Node‑RED.
 6. Anote o **endereço IPv4** do PC Servidor.
 
 ### 3. Programe o Arduino (Membro 2)
 
-1. Monte o circuito com o sensor (DHT11 ou LM35) conectado ao Arduino.
-2. Carregue o sketch (`arduino/sketch.ino`) utilizando a Arduino IDE.
+1. Monte o circuito com o sensor DHT11 conectado ao Arduino (pino 4).
+2. Carregue o sketch (`Config.arduino.ino`) utilizando a Arduino IDE.
 3. Conecte o Arduino ao PC Servidor via USB.
 
 ### 4. Execute a Interface Web (Membro 3)
 
 1. Abra o arquivo `index.html` no navegador do PC Cliente (ou utilize a extensão **Live Server** do VS Code).
 2. Substitua a variável `URL_API` nos arquivos `dashboard.js` e `historico.js` pelo IP real do servidor:
+
    ```javascript
    const URL_API = 'http://192.168.1.100:1880/api/leituras';
+   const URL_WS = 'ws://192.168.1.100:1880/ws/leituras';
    ```
-3. Navegue pelas telas de login, dashboard e histórico.
-
----
-
-## 📄 Licença
-
-Este projeto foi desenvolvido para fins educacionais como parte da **Situação de Aprendizagem Integrada**. Sinta‑se à vontade para estudar, modificar e adaptar o código conforme necessário.
+   
+4. Navegue pelas telas de login, dashboard e histórico.
 
 ---
 
