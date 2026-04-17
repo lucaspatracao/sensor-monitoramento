@@ -13,11 +13,7 @@ Bem‑vindo ao repositório do **Sensora**, um sistema completo de monitoramento
 
 ## 🔗 Links Úteis
 
-[![Figma](https://img.shields.io/badge/Figma-Protótipo-FF4785?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/RbVW0UL3P43XijopxDG3q9/Prot%C3%B3tipo---Projeto-Integrador--Sensor-?node-id=0-1&t=Wv3d4aSLGvWhPtcc-1)
-
 [![Google Drive](https://img.shields.io/badge/Google%20Drive-Documentação-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/drive/folders/1OU1aApusqg9-RoorB-O9dqr2atFL1dph)
-
-[![GitHub](https://img.shields.io/badge/GitHub-Repositório-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/lucaspatracao/sensor-monitoramento)
 
 ---
 
