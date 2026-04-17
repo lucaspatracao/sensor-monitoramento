@@ -1,0 +1,588 @@
+[
+    {
+        "id": "tab-sensora",
+        "type": "tab",
+        "label": "Sensora Monitoramento",
+        "disabled": false,
+        "info": "Fluxo principal do sistema Sensora"
+    },
+    {
+        "id": "serial-arduino",
+        "type": "serial in",
+        "z": "tab-sensora",
+        "name": "Arduino DHT11",
+        "serial": "4d80ae29261f3e80",
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "parse-json-arduino"
+            ]
+        ]
+    },
+    {
+        "id": "parse-json-arduino",
+        "type": "json",
+        "z": "tab-sensora",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 530,
+        "y": 200,
+        "wires": [
+            [
+                "add-timestamp",
+                "debug-arduino"
+            ]
+        ]
+    },
+    {
+        "id": "add-timestamp",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add Timestamp",
+        "func": "// Adiciona timestamp e prepara para salvar\nmsg.payload.datahora = new Date().toISOString();\n\n// Query SQL para inserir\nmsg.topic = \"INSERT INTO leituras (temperatura, umidade, datahora) VALUES (\" + \n            msg.payload.temperatura + \", \" + \n            msg.payload.umidade + \", NOW())\";\n\nreturn msg;",
+        "outputs": 1,
+        "x": 740,
+        "y": 200,
+        "wires": [
+            [
+                "mysql-insert"
+            ]
+        ]
+    },
+    {
+        "id": "mysql-insert",
+        "type": "mysql",
+        "z": "tab-sensora",
+        "mydb": "config-mysql",
+        "name": "Salvar no MySQL",
+        "x": 950,
+        "y": 200,
+        "wires": [
+            [
+                "broadcast-websocket"
+            ]
+        ]
+    },
+    {
+        "id": "broadcast-websocket",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Preparar WebSocket",
+        "func": "// Prepara dados para WebSocket\n// Mantém apenas os dados necessários\nreturn msg;",
+        "outputs": 1,
+        "x": 1180,
+        "y": 200,
+        "wires": [
+            [
+                "99bc1d499f08407a"
+            ]
+        ]
+    },
+    {
+        "id": "websocket-out",
+        "type": "websocket out",
+        "z": "tab-sensora",
+        "name": "WebSocket",
+        "server": "config-ws",
+        "client": "",
+        "x": 1630,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "debug-arduino",
+        "type": "debug",
+        "z": "tab-sensora",
+        "name": "Debug Arduino",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 740,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "api-leituras",
+        "type": "http in",
+        "z": "tab-sensora",
+        "name": "GET /api/leituras",
+        "url": "/api/leituras",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 380,
+        "y": 340,
+        "wires": [
+            [
+                "add-cors-headers"
+            ]
+        ]
+    },
+    {
+        "id": "add-cors-headers",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add CORS Headers",
+        "func": "// Configura CORS\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Access-Control-Allow-Origin\": \"*\",\n    \"Access-Control-Allow-Methods\": \"GET, POST, PUT, DELETE, OPTIONS\",\n    \"Access-Control-Allow-Headers\": \"Content-Type\"\n};\n\n// Trata preflight OPTIONS\nif (msg.req.method === \"OPTIONS\") {\n    msg.statusCode = 200;\n    msg.payload = \"\";\n    return [null, msg];\n}\n\n// Query SQL\nmsg.topic = \"SELECT id, temperatura, umidade, DATE_FORMAT(datahora, '%Y-%m-%dT%H:%i:%s') as datahora FROM leituras ORDER BY datahora DESC LIMIT 100\";\n\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 600,
+        "y": 340,
+        "wires": [
+            [
+                "mysql-select"
+            ],
+            [
+                "http-response-cors"
+            ]
+        ]
+    },
+    {
+        "id": "mysql-select",
+        "type": "mysql",
+        "z": "tab-sensora",
+        "mydb": "config-mysql",
+        "name": "Buscar Leituras",
+        "x": 820,
+        "y": 320,
+        "wires": [
+            [
+                "format-response"
+            ]
+        ]
+    },
+    {
+        "id": "format-response",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Formatar Resposta",
+        "func": "// Garante que sempre retorna um array\nif (!msg.payload) {\n    msg.payload = [];\n} else if (!Array.isArray(msg.payload)) {\n    msg.payload = [msg.payload];\n}\n\nmsg.statusCode = 200;\nreturn msg;",
+        "outputs": 1,
+        "x": 1030,
+        "y": 320,
+        "wires": [
+            [
+                "6213dfeda3afd734"
+            ]
+        ]
+    },
+    {
+        "id": "http-response-leituras",
+        "type": "http response",
+        "z": "tab-sensora",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1480,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "http-response-cors",
+        "type": "http response",
+        "z": "tab-sensora",
+        "name": "OPTIONS Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 840,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "login-http-v2",
+        "type": "http in",
+        "z": "tab-sensora",
+        "name": "POST /api/login",
+        "url": "/api/login",
+        "method": "post",
+        "x": 360,
+        "y": 480,
+        "wires": [
+            [
+                "login-json-v2"
+            ]
+        ]
+    },
+    {
+        "id": "login-json-v2",
+        "type": "json",
+        "z": "tab-sensora",
+        "name": "Parse JSON",
+        "property": "payload",
+        "x": 540,
+        "y": 480,
+        "wires": [
+            [
+                "login-func-v2"
+            ]
+        ]
+    },
+    {
+        "id": "login-func-v2",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Preparar SQL",
+        "func": "msg.headers = {\"Content-Type\":\"application/json\",\"Access-Control-Allow-Origin\":\"*\"};\n\nlet dados = msg.payload;\nif(typeof dados === 'string'){try{dados=JSON.parse(dados);}catch(e){dados={};}}\n\nconst usuario = dados.usuario||dados.email||\"\";\nconst senha = dados.senha||\"\";\n\nnode.warn(\"LOGIN: \"+usuario);\n\nif(!usuario||!senha){\n    msg.payload={success:false,error:\"Campos obrigatórios\"};\n    msg.statusCode=400;\n    return msg;\n}\n\nmsg.topic = \"SELECT id, nome_completo, email FROM usuarios WHERE email='\"+usuario.replace(/'/g,\"\\\\'\")+\"' AND senha=MD5('\"+senha.replace(/'/g,\"\\\\'\")+\"')\";\n\nnode.warn(\"SQL: \"+msg.topic);\n\nreturn msg;",
+        "outputs": 1,
+        "x": 720,
+        "y": 480,
+        "wires": [
+            [
+                "mysql-login-v2"
+            ]
+        ]
+    },
+    {
+        "id": "mysql-login-v2",
+        "type": "mysql",
+        "z": "tab-sensora",
+        "mydb": "config-mysql",
+        "name": "MySQL",
+        "x": 900,
+        "y": 480,
+        "wires": [
+            [
+                "login-verify-v2"
+            ]
+        ]
+    },
+    {
+        "id": "login-verify-v2",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Verificar",
+        "func": "msg.headers = {\"Content-Type\":\"application/json\",\"Access-Control-Allow-Origin\":\"*\"};\n\nif(msg.payload&&msg.payload.length>0){\n    const u=msg.payload[0];\n    msg.payload={success:true,user:{id:u.id,nome:u.nome_completo,email:u.email}};\n    msg.statusCode=200;\n    node.warn(\"LOGIN OK: \"+u.nome_completo);\n}else{\n    msg.payload={success:false,error:\"Usuário ou senha inválidos\"};\n    msg.statusCode=401;\n    node.warn(\"LOGIN FALHOU\");\n}\n\nreturn msg;",
+        "outputs": 1,
+        "x": 1060,
+        "y": 480,
+        "wires": [
+            [
+                "690c8248e6105b9b"
+            ]
+        ]
+    },
+    {
+        "id": "http-login-v2",
+        "type": "http response",
+        "z": "tab-sensora",
+        "name": "HTTP Response",
+        "x": 1480,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "cadastro-mysql-final",
+        "type": "http in",
+        "z": "tab-sensora",
+        "name": "POST /api/cadastro",
+        "url": "/api/cadastro",
+        "method": "post",
+        "upload": false,
+        "x": 330,
+        "y": 580,
+        "wires": [
+            [
+                "json-cadastro-final"
+            ]
+        ]
+    },
+    {
+        "id": "json-cadastro-final",
+        "type": "json",
+        "z": "tab-sensora",
+        "name": "Parse JSON",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 530,
+        "y": 580,
+        "wires": [
+            [
+                "func-cadastro-final"
+            ]
+        ]
+    },
+    {
+        "id": "func-cadastro-final",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Inserir Usuário",
+        "func": "// Headers CORS\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Access-Control-Allow-Origin\": \"*\"\n};\n\n// Pega os dados\nlet dados = msg.payload;\nif (typeof dados === 'string') {\n    try {\n        dados = JSON.parse(dados);\n    } catch(e) {\n        dados = {};\n    }\n}\n\nconst nome = dados.nomeCompleto || \"\";\nconst email = dados.email || \"\";\nconst senha = dados.senha || \"\";\n\nnode.warn(\"CADASTRO: \" + nome + \" - \" + email);\n\n// Validações\nif (!nome || !email || !senha) {\n    msg.payload = { success: false, error: \"Todos os campos são obrigatórios\" };\n    msg.statusCode = 400;\n    return msg;\n}\n\nif (senha.length < 6) {\n    msg.payload = { success: false, error: \"Senha deve ter pelo menos 6 caracteres\" };\n    msg.statusCode = 400;\n    return msg;\n}\n\n// SQL para inserir (MD5 feito pelo MySQL)\nmsg.topic = \"INSERT INTO usuarios (nome_completo, email, senha) VALUES ('\" + \n            nome.replace(/'/g, \"\\\\'\") + \"', '\" + \n            email.replace(/'/g, \"\\\\'\") + \"', MD5('\" + \n            senha.replace(/'/g, \"\\\\'\") + \"'))\";\n\nnode.warn(\"SQL: \" + msg.topic);\n\nreturn msg;",
+        "outputs": 1,
+        "x": 720,
+        "y": 580,
+        "wires": [
+            [
+                "mysql-cadastro-final"
+            ]
+        ]
+    },
+    {
+        "id": "mysql-cadastro-final",
+        "type": "mysql",
+        "z": "tab-sensora",
+        "mydb": "config-mysql",
+        "name": "MySQL - Inserir",
+        "x": 920,
+        "y": 580,
+        "wires": [
+            [
+                "resposta-cadastro-final"
+            ]
+        ]
+    },
+    {
+        "id": "resposta-cadastro-final",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Resposta",
+        "func": "// Headers CORS\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Access-Control-Allow-Origin\": \"*\"\n};\n\n// Verifica se inseriu com sucesso\nif (msg.payload && msg.payload.affectedRows > 0) {\n    msg.payload = {\n        success: true,\n        message: \"Usuário cadastrado com sucesso!\"\n    };\n    msg.statusCode = 201;\n    node.warn(\"CADASTRO OK!\");\n} else {\n    // Se deu erro (ex: email duplicado)\n    msg.payload = {\n        success: false,\n        error: \"Erro ao cadastrar. Email pode já estar em uso.\"\n    };\n    msg.statusCode = 400;\n    node.warn(\"CADASTRO FALHOU\");\n}\n\nreturn msg;",
+        "outputs": 1,
+        "x": 1100,
+        "y": 580,
+        "wires": [
+            [
+                "d4b3fbeab0ed1d79"
+            ]
+        ]
+    },
+    {
+        "id": "http-cadastro-final",
+        "type": "http response",
+        "z": "tab-sensora",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1520,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "recuperar-simples-http",
+        "type": "http in",
+        "z": "tab-sensora",
+        "name": "POST /api/recuperar-senha",
+        "url": "/api/recuperar-senha",
+        "method": "post",
+        "upload": false,
+        "x": 300,
+        "y": 700,
+        "wires": [
+            [
+                "json-recuperar-simples"
+            ]
+        ]
+    },
+    {
+        "id": "json-recuperar-simples",
+        "type": "json",
+        "z": "tab-sensora",
+        "name": "Parse JSON",
+        "property": "payload",
+        "x": 530,
+        "y": 700,
+        "wires": [
+            [
+                "func-recuperar-simples"
+            ]
+        ]
+    },
+    {
+        "id": "func-recuperar-simples",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Alterar Senha Direto",
+        "func": "msg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Access-Control-Allow-Origin\": \"*\"\n};\n\nlet dados = msg.payload;\nif (typeof dados === 'string') {\n    try { dados = JSON.parse(dados); } catch(e) { dados = {}; }\n}\n\nconst email = dados.email || \"\";\nconst novaSenha = dados.novaSenha || \"\";\nconst confirmarSenha = dados.confirmarSenha || \"\";\n\nnode.warn(\"RECUPERAR SENHA: \" + email);\n\n// Validações\nif (!email || !novaSenha || !confirmarSenha) {\n    msg.payload = { success: false, error: \"Todos os campos são obrigatórios\" };\n    msg.statusCode = 400;\n    return msg;\n}\n\nif (novaSenha !== confirmarSenha) {\n    msg.payload = { success: false, error: \"As senhas não coincidem\" };\n    msg.statusCode = 400;\n    return msg;\n}\n\nif (novaSenha.length < 6) {\n    msg.payload = { success: false, error: \"A senha deve ter pelo menos 6 caracteres\" };\n    msg.statusCode = 400;\n    return msg;\n}\n\n// Atualiza a senha diretamente\nmsg.topic = \"UPDATE usuarios SET senha = MD5('\" + novaSenha.replace(/'/g, \"\\\\'\") + \"') WHERE email = '\" + email.replace(/'/g, \"\\\\'\") + \"'\";\n\nnode.warn(\"SQL: \" + msg.topic);\n\nmsg.email = email;\n\nreturn msg;",
+        "outputs": 1,
+        "x": 740,
+        "y": 700,
+        "wires": [
+            [
+                "mysql-recuperar-simples"
+            ]
+        ]
+    },
+    {
+        "id": "mysql-recuperar-simples",
+        "type": "mysql",
+        "z": "tab-sensora",
+        "mydb": "config-mysql",
+        "name": "Atualizar Senha",
+        "x": 960,
+        "y": 700,
+        "wires": [
+            [
+                "resposta-recuperar-simples"
+            ]
+        ]
+    },
+    {
+        "id": "resposta-recuperar-simples",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Resposta",
+        "func": "msg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Access-Control-Allow-Origin\": \"*\"\n};\n\n// Verifica se atualizou algum registro\nif (msg.payload && msg.payload.affectedRows > 0) {\n    msg.payload = {\n        success: true,\n        message: \"Senha alterada com sucesso!\"\n    };\n    msg.statusCode = 200;\n    node.warn(\"SENHA ALTERADA PARA: \" + msg.email);\n} else {\n    msg.payload = {\n        success: false,\n        error: \"Email não encontrado\"\n    };\n    msg.statusCode = 400;\n    node.warn(\"EMAIL NÃO ENCONTRADO: \" + msg.email);\n}\n\nreturn msg;",
+        "outputs": 1,
+        "x": 1140,
+        "y": 700,
+        "wires": [
+            [
+                "cors-headers"
+            ]
+        ]
+    },
+    {
+        "id": "http-recuperar-simples",
+        "type": "http response",
+        "z": "tab-sensora",
+        "name": "HTTP Response",
+        "x": 1580,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "cors-headers",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add CORS Headers",
+        "func": "msg.headers = {\n    \"Access-Control-Allow-Origin\": \"*\",\n    \"Access-Control-Allow-Methods\": \"GET, POST, PUT, DELETE, OPTIONS\",\n    \"Access-Control-Allow-Headers\": \"Content-Type\"\n};\n\nif (msg.req.method === \"OPTIONS\") {\n    msg.statusCode = 200;\n    return msg;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "x": 1360,
+        "y": 700,
+        "wires": [
+            [
+                "http-recuperar-simples"
+            ]
+        ]
+    },
+    {
+        "id": "d4b3fbeab0ed1d79",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add CORS Headers",
+        "func": "msg.headers = {\n    \"Access-Control-Allow-Origin\": \"*\",\n    \"Access-Control-Allow-Methods\": \"GET, POST, PUT, DELETE, OPTIONS\",\n    \"Access-Control-Allow-Headers\": \"Content-Type\"\n};\n\nif (msg.req.method === \"OPTIONS\") {\n    msg.statusCode = 200;\n    return msg;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1300,
+        "y": 580,
+        "wires": [
+            [
+                "http-cadastro-final"
+            ]
+        ]
+    },
+    {
+        "id": "690c8248e6105b9b",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add CORS Headers",
+        "func": "msg.headers = {\n    \"Access-Control-Allow-Origin\": \"*\",\n    \"Access-Control-Allow-Methods\": \"GET, POST, PUT, DELETE, OPTIONS\",\n    \"Access-Control-Allow-Headers\": \"Content-Type\"\n};\n\nif (msg.req.method === \"OPTIONS\") {\n    msg.statusCode = 200;\n    return msg;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 480,
+        "wires": [
+            [
+                "http-login-v2"
+            ]
+        ]
+    },
+    {
+        "id": "6213dfeda3afd734",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add CORS Headers",
+        "func": "msg.headers = {\n    \"Access-Control-Allow-Origin\": \"*\",\n    \"Access-Control-Allow-Methods\": \"GET, POST, PUT, DELETE, OPTIONS\",\n    \"Access-Control-Allow-Headers\": \"Content-Type\"\n};\n\nif (msg.req.method === \"OPTIONS\") {\n    msg.statusCode = 200;\n    return msg;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 320,
+        "wires": [
+            [
+                "http-response-leituras"
+            ]
+        ]
+    },
+    {
+        "id": "99bc1d499f08407a",
+        "type": "function",
+        "z": "tab-sensora",
+        "name": "Add CORS Headers",
+        "func": "msg.headers = {\n    \"Access-Control-Allow-Origin\": \"*\",\n    \"Access-Control-Allow-Methods\": \"GET, POST, PUT, DELETE, OPTIONS\",\n    \"Access-Control-Allow-Headers\": \"Content-Type\"\n};\n\nif (msg.req.method === \"OPTIONS\") {\n    msg.statusCode = 200;\n    return msg;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1420,
+        "y": 200,
+        "wires": [
+            [
+                "websocket-out"
+            ]
+        ]
+    },
+    {
+        "id": "4d80ae29261f3e80",
+        "type": "serial-port",
+        "name": "",
+        "serialport": "COM7",
+        "serialbaud": "115200",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "config-mysql",
+        "type": "MySQLdatabase",
+        "name": "Sensora DB",
+        "host": "localhost",
+        "port": "3306",
+        "db": "sensora_db",
+        "tz": "",
+        "charset": ""
+    },
+    {
+        "id": "config-ws",
+        "type": "websocket-listener",
+        "path": "/ws/leituras",
+        "wholemsg": "false"
+    },
+    {
+        "id": "de1fe929334b4c0a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-serialport": "2.0.3",
+            "node-red-node-mysql": "3.0.0"
+        }
+    }
+]
