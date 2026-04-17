@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Sensora</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../img/sensor-logo.png">
+
+    <!-- Folhas de estilo -->
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+    <!-- Biblioteca Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="pagina-dashboard">
+    <!-- ESTRUTURA PRINCIPAL DO DASHBOARD -->
+    <div class="estrutura-dashboard">
+
+        <!-- ===== CABEÇALHO ===== -->
+        <header class="cabecalho-dashboard">
+            <div class="container-logo">
+                <img src="../img/sensor-logo.png" alt="Sensor Logo" class="imagem-logo">
+                <span class="texto-logo">Sensora</span>
+            </div>
+            <nav class="navegacao-principal">
+                <ul class="menu-navegacao">
+                    <li class="item-menu ativo"><a href="dashboard.html" class="link-menu">Dashboard</a></li>
+                    <li class="item-menu"><a href="historico.html" class="link-menu">Histórico</a></li>
+                    <li class="item-menu"><a href="../index.html" class="link-menu sair">Sair</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+        <main class="conteudo-dashboard">
+            <!-- Cabeçalho da página com título e botão lado a lado -->
+            <div class="cabecalho-pagina">
+                <h1 class="titulo-pagina">Monitoramento de Temperatura e Umidade</h1>
+                <div class="acoes-dashboard">
+                    <a href="historico.html" class="botao-secundario" id="botaoVerHistorico">Histórico</a>
+                </div>
+            </div>
+
+            <!-- Container dos cartões de leitura atual -->
+            <div class="cartoes-leitura">
+                <!-- Cartão de Temperatura -->
+                <section class="cartao cartao-temperatura-atual">
+                    <h2 class="titulo-cartao">Temperatura Atual</h2>
+                    <p class="valor-leitura" id="valorTemperaturaAtual">-- °C</p>
+                </section>
+
+                <!-- Cartão de Umidade -->
+                <section class="cartao cartao-umidade-atual">
+                    <h2 class="titulo-cartao">Umidade Atual</h2>
+                    <p class="valor-leitura" id="valorUmidadeAtual">-- %</p>
+                </section>
+            </div>
+
+            <!-- Área do Gráfico de Temperatura -->
+            <section class="cartao cartao-grafico">
+                <h2 class="titulo-cartao">Evolução da Temperatura</h2>
+                <div class="container-grafico">
+                    <canvas id="graficoTemperatura" width="800" height="400"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ===== RODAPÉ ===== -->
+    <footer class="rodape">
+        <p>
+            &copy; 2026 Sensora. Todos os direitos reservados.
+            <span class="separador">|</span>
+            <span class="redes-sociais">
+                <a href="https://www.instagram.com/lnpatracao" target="_blank" rel="noopener noreferrer">@lnpatracao</a>
+                <a href="https://www.instagram.com/rafa_rubia7" target="_blank" rel="noopener noreferrer">@rafa_rubia7</a>
+                <a href="https://www.instagram.com/_samusantana_" target="_blank" rel="noopener noreferrer">@_samusantana_</a>
+            </span>
+        </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/dark-mode.js"></script>
+    <script src="../js/dashboard.js"></script>
+
+    <!-- Botão Dark Mode -->
+    <button class="botao-dark-mode" id="botaoDarkMode" aria-label="Alternar modo escuro">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+        </svg>
+        <span class="texto-dark-mode">Escuro</span>
+    </button>
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* Estilos específicos para a página de Login (Acessar) */
+
+.pagina-login {
+    /* Fundo sólido, sem gradiente */
+    background-color: var(--cor-fundo);
+}
+
+.cartao-login {
+    animation: aparecer 0.3s ease-out;
+}
+
+/* Ajuste fino para o botão */
+#botaoEntrar {
+    width: 100%;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta | Sensora</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../img/sensor-logo.png">
+
+    <!-- Folhas de estilo -->
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
+</head>
+<body class="pagina-cadastro">
+    <!-- CONTAINER PRINCIPAL -->
+    <main class="container-cadastro">
+        <div class="cartao-cadastro-wrapper">
+            <!-- Logo e nome do sistema -->
+            <div class="logo-cadastro">
+                <img src="../img/sensor-logo.png" alt="Sensor Logo" class="imagem-logo-cadastro">
+                <span class="texto-logo-cadastro">Sensora</span>
+            </div>
+
+            <!-- Formulário de cadastro -->
+            <div class="cartao-cadastro">
+                <h1 class="titulo-cadastro">Criar Conta</h1>
+
+                <form id="formularioCadastro">
+                    <!-- Nome completo -->
+                    <div class="grupo-campo">
+                        <label for="nomeCompleto" class="rotulo-campo">Nome Completo:</label>
+                        <input type="text" id="nomeCompleto" class="entrada-campo" 
+                               placeholder="Digite seu nome completo" required>
+                    </div>
+
+                    <!-- E-mail -->
+                    <div class="grupo-campo">
+                        <label for="email" class="rotulo-campo">Email:</label>
+                        <input type="email" id="email" class="entrada-campo" 
+                               placeholder="exemplo@dominio.com" required>
+                    </div>
+
+                    <!-- Senha -->
+                    <div class="grupo-campo">
+                        <label for="senha" class="rotulo-campo">Senha:</label>
+                        <input type="password" id="senha" class="entrada-campo" 
+                               placeholder="Mínimo 6 caracteres" required>
+                    </div>
+
+                    <!-- Confirmação de senha -->
+                    <div class="grupo-campo">
+                        <label for="confirmarSenha" class="rotulo-campo">Confirmar Senha:</label>
+                        <input type="password" id="confirmarSenha" class="entrada-campo" 
+                               placeholder="Confirme sua senha" required>
+                    </div>
+
+                    <!-- Botão de envio -->
+                    <div class="acoes-formulario">
+                        <button type="submit" class="botao-primario" id="botaoCadastrar">Cadastrar</button>
+                    </div>
+
+                    <!-- Área para mensagens de feedback -->
+                    <div id="mensagem" style="margin-top: 15px; text-align: center;"></div>
+
+                    <!-- Link para login -->
+                    <div class="links-auxiliares">
+                        <a href="../index.html">Já possuo uma Conta</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../js/dark-mode.js"></script>
+    <script src="../js/cadastro.js"></script>
+
+    <!-- Botão flutuante de Dark Mode -->
+    <button class="botao-dark-mode" id="botaoDarkMode" aria-label="Alternar modo escuro">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+        </svg>
+        <span>Escuro</span>
+    </button>
+</body>
+</html>

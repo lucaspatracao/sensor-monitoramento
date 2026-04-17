@@ -1,0 +1,739 @@
+/* =========================================
+   ESTILO GLOBAL - MONITORAMENTO DE TEMPERATURA
+   ========================================= */
+
+/* ----- RESET E CONFIGURAÇÕES BÁSICAS ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Paleta de Cores */
+    --cor-primaria: #2563eb;
+    --cor-primaria-escura: #1e40af;
+    --cor-primaria-clara: #dbeafe;
+    --cor-secundaria: #f97316;
+    --cor-sucesso: #10b981;
+    --cor-erro: #ef4444;
+    --cor-texto: #1e293b;
+    --cor-texto-suave: #64748b;
+    --cor-fundo: #f8fafc;
+    --cor-branca: #ffffff;
+    --cor-borda: #e2e8f0;
+
+    /* Tipografia */
+    --fonte-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    /* Espaçamentos */
+    --espaco-xs: 4px;
+    --espaco-sm: 8px;
+    --espaco-md: 16px;
+    --espaco-lg: 24px;
+    --espaco-xl: 32px;
+    --espaco-2xl: 48px;
+
+    /* Bordas e Sombras */
+    --borda-arredondada: 12px;
+    --borda-arredondada-media: 8px;
+    --borda-arredondada-pequena: 4px;
+    --sombra-suave: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --sombra-media: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+body {
+    font-family: var(--fonte-principal);
+    color: var(--cor-texto);
+    background-color: var(--cor-fundo);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ----- TIPOGRAFIA ----- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: var(--espaco-md);
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+a {
+    color: var(--cor-primaria);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--cor-primaria-escura);
+    text-decoration: underline;
+}
+
+/* ----- UTILITÁRIOS ----- */
+.visivel {
+    display: block !important;
+}
+
+.oculto {
+    display: none !important;
+}
+
+.texto-centro {
+    text-align: center;
+}
+
+.texto-erro {
+    color: var(--cor-erro);
+    font-size: 0.875rem;
+    margin-top: var(--espaco-xs);
+}
+
+/* ----- CLASSES DE FEEDBACK (compatíveis com modo escuro) ----- */
+.mensagem-feedback {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 500;
+    min-height: 24px; /* evita que o layout "pule" */
+}
+
+.texto-info {
+    color: var(--cor-primaria);       /* Azul primário */
+}
+
+.texto-sucesso {
+    color: var(--cor-sucesso);        /* Verde sucesso */
+}
+
+/* ----- LAYOUT BASE PARA PÁGINAS DE AUTENTICAÇÃO (LOGIN/CADASTRO/RECUPERAÇÃO) ----- */
+.pagina-login,
+.pagina-cadastro,
+.pagina-recuperar-senha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: var(--espaco-lg);
+    background-color: var(--cor-fundo); /* fundo sólido, sem gradiente */
+}
+
+.container-login,
+.container-cadastro,
+.container-recuperar-senha {
+    width: 100%;
+    max-width: 900px;
+}
+
+/* Wrapper para logo + formulário nas páginas de autenticação */
+.cartao-login-wrapper,
+.cartao-cadastro-wrapper,
+.cartao-recuperar-senha-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--espaco-xl);
+    background-color: var(--cor-branca);
+    padding: var(--espaco-xl);
+    border-radius: var(--borda-arredondada);
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-borda);
+    flex-wrap: wrap;
+}
+
+/* Logo ao lado do formulário */
+.logo-login,
+.logo-cadastro,
+.logo-recuperar-senha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 150px;
+}
+
+.imagem-logo-login,
+.imagem-logo-cadastro,
+.imagem-logo-recuperar-senha {
+    width: 120px;
+    height: auto;
+    margin-bottom: var(--espaco-sm);
+}
+
+.texto-logo-login,
+.texto-logo-cadastro,
+.texto-logo-recuperar-senha {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--cor-primaria);
+}
+
+/* Cartões de formulário mantêm tamanho fixo */
+.cartao-login,
+.cartao-cadastro,
+.cartao-recuperar-senha {
+    flex: 1;
+    min-width: 320px;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+
+.titulo-login,
+.titulo-cadastro,
+.titulo-recuperar-senha {
+    text-align: center;
+    margin-bottom: var(--espaco-xs);
+    color: var(--cor-texto);
+}
+
+.subtitulo-login,
+.subtitulo-recuperar-senha {
+    text-align: center;
+    color: var(--cor-texto-suave);
+    margin-bottom: var(--espaco-lg);
+    font-size: 0.95rem;
+}
+
+/* ----- FORMULÁRIOS (GERAL) ----- */
+.formulario-login,
+.formulario-cadastro,
+.formulario-recuperar-senha {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-md);
+}
+
+.grupo-campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-xs);
+}
+
+.rotulo-campo {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--cor-texto);
+}
+
+.entrada-campo {
+    padding: var(--espaco-sm) var(--espaco-md);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--borda-arredondada-media);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.entrada-campo:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px var(--cor-primaria-clara);
+}
+
+.entrada-campo::placeholder {
+    color: var(--cor-texto-suave);
+    opacity: 0.7;
+}
+
+/* ----- BOTÕES ----- */
+.botao-primario,
+.botao-secundario {
+    display: inline-block;
+    padding: var(--espaco-sm) var(--espaco-lg);
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: var(--borda-arredondada-media);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    text-align: center;
+    font-family: inherit;
+}
+
+.botao-primario {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: 1px solid var(--cor-primaria);
+}
+
+.botao-primario:hover {
+    background-color: var(--cor-primaria-escura);
+    text-decoration: none;
+}
+
+.botao-secundario {
+    background-color: transparent;
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-primaria);
+}
+
+.botao-secundario:hover {
+    background-color: var(--cor-primaria-clara);
+    text-decoration: none;
+}
+
+.acoes-formulario {
+    margin-top: var(--espaco-sm);
+    display: flex;
+    justify-content: center;
+}
+
+.acoes-formulario .botao-primario {
+    width: 100%;
+}
+
+/* ----- LINKS AUXILIARES (LOGIN/CADASTRO) ----- */
+.links-auxiliares {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--espaco-sm);
+    margin-top: var(--espaco-lg);
+    font-size: 0.9rem;
+}
+
+.link-esqueci-senha,
+.link-cadastro,
+.link-ja-possui-conta,
+.link-voltar-login {
+    color: var(--cor-texto-suave);
+}
+
+.link-esqueci-senha:hover,
+.link-cadastro:hover,
+.link-ja-possui-conta:hover,
+.link-voltar-login:hover {
+    color: var(--cor-primaria);
+}
+
+.separador {
+    color: var(--cor-borda);
+}
+
+/* ----- CABEÇALHO DAS PÁGINAS INTERNAS (DASHBOARD/HISTÓRICO) ----- */
+.cabecalho-dashboard,
+.cabecalho-historico {
+    background-color: var(--cor-branca);
+    border-bottom: 1px solid var(--cor-borda);
+    padding: var(--espaco-md) var(--espaco-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-shadow: var(--sombra-suave);
+    min-height: 90px;
+}
+
+/* Container da logo (imagem + texto) */
+.container-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-md);
+}
+
+.imagem-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+}
+
+.texto-logo {
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--cor-primaria);
+    letter-spacing: -0.5px;
+}
+
+/* Remove estilo antigo de .logo se existir */
+.logo {
+    display: none;
+}
+
+/* ----- MENU DE NAVEGAÇÃO ----- */
+.navegacao-principal .menu-navegacao {
+    display: flex;
+    list-style: none;
+    gap: var(--espaco-xl);
+}
+
+.item-menu .link-menu {
+    color: var(--cor-texto);
+    font-weight: 500;
+    font-size: 1.25rem;
+    padding: var(--espaco-xs) 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.item-menu .link-menu:hover {
+    color: var(--cor-primaria);
+    text-decoration: none;
+}
+
+.item-menu.ativo .link-menu {
+    color: var(--cor-primaria);
+    border-bottom-color: var(--cor-primaria);
+}
+
+.link-menu.sair {
+    color: var(--cor-erro);
+}
+
+.link-menu.sair:hover {
+    color: var(--cor-erro);
+    border-bottom-color: var(--cor-erro);
+}
+
+/* ----- CONTEÚDO PRINCIPAL DASHBOARD/HISTÓRICO ----- */
+.conteudo-dashboard,
+.conteudo-historico {
+    flex: 1;
+    padding: var(--espaco-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.titulo-pagina {
+    margin-bottom: var(--espaco-lg);
+    font-size: 1.8rem;
+}
+
+/* ----- CARTÕES (DASHBOARD/HISTÓRICO) ----- */
+.cartao {
+    background-color: var(--cor-branca);
+    border-radius: var(--borda-arredondada);
+    padding: var(--espaco-lg);
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    margin-bottom: var(--espaco-lg);
+}
+
+.titulo-cartao {
+    margin-bottom: var(--espaco-md);
+    font-size: 1.2rem;
+    color: var(--cor-texto);
+}
+
+/* ----- TABELA (HISTÓRICO) ----- */
+.container-tabela {
+    overflow-x: auto;
+}
+
+.tabela-historico {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tabela-historico th {
+    text-align: left;
+    padding: var(--espaco-md);
+    background-color: var(--cor-fundo);
+    font-weight: 600;
+    border-bottom: 2px solid var(--cor-borda);
+}
+
+.tabela-historico td {
+    padding: var(--espaco-md);
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.tabela-historico tbody tr:hover {
+    background-color: var(--cor-fundo);
+}
+
+.linha-placeholder td {
+    text-align: center;
+    color: var(--cor-texto-suave);
+    padding: var(--espaco-xl);
+}
+
+/* ----- FILTROS (HISTÓRICO) ----- */
+.cartao-filtros .formulario-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--espaco-lg);
+}
+
+.grupo-filtro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-xs);
+    min-width: 200px;
+}
+
+.acoes-filtro {
+    display: flex;
+    gap: var(--espaco-md);
+}
+
+/* ----- LINK VOLTAR (HISTÓRICO) ----- */
+.link-voltar-dashboard {
+    display: inline-block;
+    margin-bottom: var(--espaco-lg);
+    color: var(--cor-texto-suave);
+    font-weight: 500;
+}
+
+.link-voltar-dashboard:hover {
+    color: var(--cor-primaria);
+}
+
+/* ----- VALOR TEMPERATURA ATUAL (DASHBOARD) ----- */
+.cartao-temperatura-atual {
+    display: inline-block;
+    min-width: 250px;
+}
+
+.valor-temperatura {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--cor-secundaria);
+    line-height: 1;
+}
+
+/* ----- GRÁFICO (DASHBOARD) ----- */
+.cartao-grafico {
+    width: 100%;
+}
+
+.container-grafico {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* ----- AÇÕES DASHBOARD ----- */
+.acoes-dashboard {
+    margin-top: var(--espaco-lg);
+}
+
+/* ----- FOOTER SIMPLES ----- */
+.rodape {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espaco-sm);
+    background-color: var(--cor-branca);
+    border-top: 1px solid var(--cor-borda);
+    padding: var(--espaco-md) var(--espaco-xl);
+    text-align: center;
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+.rodape p {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+}
+
+.rodape .separador {
+    color: var(--cor-borda);
+    user-select: none;
+}
+
+.redes-sociais {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+}
+
+.redes-sociais a {
+    color: var(--cor-texto-suave);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.redes-sociais a:hover {
+    color: var(--cor-primaria);
+}
+
+/* ===== BOTÃO DARK MODE FIXO ===== */
+.botao-dark-mode {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: var(--cor-branca);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+    border-radius: 40px;
+    box-shadow: var(--sombra-media);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.botao-dark-mode:hover {
+    background-color: var(--cor-fundo);
+    border-color: var(--cor-texto-suave);
+}
+
+.botao-dark-mode svg {
+    fill: currentColor;
+}
+
+/* Ajuste para quando o footer existir: sobe um pouco mais */
+.pagina-dashboard .botao-dark-mode,
+.pagina-historico .botao-dark-mode {
+    bottom: 90px;
+}
+
+/* ===== MODO ESCURO ===== */
+body.modo-escuro {
+    --cor-branca: #1e1e1e;
+    --cor-fundo: #121212;
+    --cor-texto: #e0e0e0;
+    --cor-texto-suave: #a0a0a0;
+    --cor-borda: #333333;
+}
+
+/* Ajustes específicos para elementos que usam fundo branco */
+body.modo-escuro .cartao,
+body.modo-escuro .cartao-login,
+body.modo-escuro .cartao-cadastro,
+body.modo-escuro .cartao-recuperar-senha,
+body.modo-escuro .cabecalho-dashboard,
+body.modo-escuro .cabecalho-historico,
+body.modo-escuro .rodape {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+
+/* Cartões de leitura no dashboard - fundo sólido no modo escuro */
+body.modo-escuro .cartao-temperatura-atual,
+body.modo-escuro .cartao-umidade-atual {
+    background-color: #1e1e1e;
+    border-left-width: 6px;
+    border-left-style: solid;
+}
+
+body.modo-escuro .cartao-temperatura-atual {
+    border-left-color: var(--cor-secundaria);
+}
+
+body.modo-escuro .cartao-umidade-atual {
+    border-left-color: #0ea5e9;
+}
+
+/* Tabela no histórico */
+body.modo-escuro .tabela-historico th {
+    background-color: #2a2a2a;
+}
+
+body.modo-escuro .tabela-historico tbody tr:hover {
+    background-color: #2a2a2a;
+}
+
+body.modo-escuro .tabela-historico tbody tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+/* Inputs e botões mantêm legibilidade */
+body.modo-escuro .entrada-campo {
+    background-color: #2a2a2a;
+    color: var(--cor-texto);
+    border-color: #444;
+}
+
+body.modo-escuro .entrada-campo:focus {
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+/* Botão dark mode no modo escuro */
+body.modo-escuro .botao-dark-mode {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.modo-escuro .botao-dark-mode:hover {
+    background-color: #3a3a3a;
+}
+
+/* Ajuste de cores de feedback no modo escuro */
+body.modo-escuro .texto-info {
+    color: #60a5fa;
+}
+
+body.modo-escuro .texto-sucesso {
+    color: #34d399;
+}
+
+body.modo-escuro .texto-erro {
+    color: #f87171;
+}
+
+/* ----- RESPONSIVIDADE ----- */
+@media (max-width: 768px) {
+    .cartao-login-wrapper,
+    .cartao-cadastro-wrapper,
+    .cartao-recuperar-senha-wrapper {
+        flex-direction: column;
+        padding: var(--espaco-lg);
+    }
+
+    .cabecalho-dashboard,
+    .cabecalho-historico {
+        flex-direction: column;
+        gap: var(--espaco-md);
+        align-items: flex-start;
+    }
+
+    .container-logo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .navegacao-principal .menu-navegacao {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .texto-logo {
+        font-size: 1.6rem;
+    }
+
+    .cartao-filtros .formulario-filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grupo-filtro {
+        min-width: auto;
+    }
+
+    .valor-temperatura {
+        font-size: 3rem;
+    }
+}

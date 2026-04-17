@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico | Sensora</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../img/sensor-logo.png">
+
+    <!-- Folhas de estilo -->
+    <link rel="stylesheet" href="../css/estilo.css">
+    <link rel="stylesheet" href="../css/historico.css">
+</head>
+<body class="pagina-historico">
+    <!-- ESTRUTURA PRINCIPAL -->
+    <div class="estrutura-historico">
+
+        <!-- ===== CABEÇALHO ===== -->
+        <header class="cabecalho-historico">
+            <div class="container-logo">
+                <img src="../img/sensor-logo.png" alt="Sensor Logo" class="imagem-logo">
+                <span class="texto-logo">Sensora</span>
+            </div>
+            <nav class="navegacao-principal">
+                <ul class="menu-navegacao">
+                    <li class="item-menu"><a href="dashboard.html" class="link-menu">Dashboard</a></li>
+                    <li class="item-menu ativo"><a href="historico.html" class="link-menu">Histórico</a></li>
+                    <li class="item-menu"><a href="../index.html" class="link-menu sair">Sair</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- ===== CONTEÚDO PRINCIPAL ===== -->
+        <main class="conteudo-historico">
+            <!-- Link para voltar ao Dashboard -->
+            <a href="dashboard.html" class="link-voltar-dashboard">Voltar ao Dashboard</a>
+
+            <h1 class="titulo-pagina">Histórico de Leituras</h1>
+
+            <!-- Filtros por período -->
+            <section class="cartao cartao-filtros">
+                <form class="formulario-filtros" id="formularioFiltros">
+                    <div class="grupo-filtro">
+                        <label for="dataInicio" class="rotulo-campo">De:</label>
+                        <input type="datetime-local" id="dataInicio" name="dataInicio" class="entrada-campo">
+                    </div>
+                    <div class="grupo-filtro">
+                        <label for="dataFim" class="rotulo-campo">Até:</label>
+                        <input type="datetime-local" id="dataFim" name="dataFim" class="entrada-campo">
+                    </div>
+                    <div class="acoes-filtro">
+                        <button type="submit" class="botao-primario" id="botaoFiltrar">Filtrar</button>
+                        <button type="reset" class="botao-secundario" id="botaoLimparFiltros">Limpar</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Tabela de leituras -->
+            <section class="cartao cartao-tabela-historico">
+                <h2 class="titulo-cartao">Leituras Registradas</h2>
+                <div class="container-tabela">
+                    <table class="tabela-historico" id="tabelaHistorico">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Temperatura (°C)</th>
+                                <th>Umidade (%)</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaHistorico">
+                            <tr class="linha-placeholder">
+                                <td colspan="4">Nenhuma leitura encontrada.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ===== RODAPÉ ===== -->
+    <footer class="rodape">
+        <p>
+            &copy; 2026 Sensora. Todos os direitos reservados.
+            <span class="separador">|</span>
+            <span class="redes-sociais">
+                <a href="https://www.instagram.com/lnpatracao" target="_blank" rel="noopener noreferrer">@lnpatracao</a>
+                <a href="https://www.instagram.com/rafa_rubia7" target="_blank" rel="noopener noreferrer">@rafa_rubia7</a>
+                <a href="https://www.instagram.com/_samusantana_" target="_blank" rel="noopener noreferrer">@_samusantana_</a>
+            </span>
+        </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/dark-mode.js"></script>
+    <script src="../js/historico.js"></script>
+
+    <!-- Botão Dark Mode -->
+    <button class="botao-dark-mode" id="botaoDarkMode" aria-label="Alternar modo escuro">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+        </svg>
+        <span class="texto-dark-mode">Escuro</span>
+    </button>
+</body>
+</html>

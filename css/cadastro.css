@@ -1,0 +1,14 @@
+/* Estilos específicos para a página de Cadastro (Criar Conta) */
+
+.pagina-cadastro {
+    /* Fundo sólido, sem gradiente */
+    background-color: var(--cor-fundo);
+}
+
+.cartao-cadastro {
+    animation: aparecer 0.3s ease-out;
+}
+
+#botaoCadastrar {
+    width: 100%;
+}

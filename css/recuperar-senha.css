@@ -1,0 +1,14 @@
+/* Estilos específicos para a página de Recuperação de Senha */
+
+.pagina-recuperar-senha {
+    /* Fundo sólido, sem gradiente */
+    background-color: var(--cor-fundo);
+}
+
+.cartao-recuperar-senha {
+    animation: aparecer 0.3s ease-out;
+}
+
+#botaoEnviar {
+    width: 100%;
+}
