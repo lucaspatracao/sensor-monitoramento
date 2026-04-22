@@ -1,122 +1,136 @@
 /**
- * Módulo do Dashboard
- * 
+ * ============================================================
+ * Modulo do Dashboard - Sensora
+ * ============================================================
  * Exibe em tempo real:
  * - Valor atual de temperatura e umidade.
- * - Gráfico de evolução da temperatura (Chart.js).
+ * - Grafico de evolucao da temperatura e umidade (Chart.js).
  * 
- * Comunica‑se com o backend via:
- * - API REST (GET) para carregar o histórico inicial.
- * - WebSocket para receber atualizações em tempo real.
+ * Comunicacao com backend:
+ * - API REST (GET) - atualizacao a cada 5 segundos
+ * - WebSocket - atualizacao instantanea
+ * ============================================================
  */
 
-// ----- CONFIGURAÇÕES -----
-const URL_API = 'http://10.110.12.73:1880/api/leituras';
-const URL_WS = 'ws://10.110.12.73:1880/ws/leituras';
+// ----- CONFIGURACOES -----
+const URL_API = 'http://10.110.12.81:1880/api/leituras'; // Endpoint para buscar leituras via HTTP
+const URL_WS = 'ws://10.110.12.81:1880/ws/leituras';     // Endpoint para receber leituras via WebSocket
+const INTERVALO_ATUALIZACAO = 10000;                       // Intervalo de 5 segundos (em milissegundos) para atualizacao periodica
 
 // ----- ELEMENTOS DO DOM -----
-const elementoValorTemperatura = document.getElementById('valorTemperaturaAtual');
-const elementoValorUmidade = document.getElementById('valorUmidadeAtual');
-const canvas = document.getElementById('graficoTemperatura');
-const ctx = canvas ? canvas.getContext('2d') : null;
+// Obtem referencias para os elementos HTML que serao atualizados
+const elementoValorTemperatura = document.getElementById('valorTemperaturaAtual'); // Span/div da temperatura
+const elementoValorUmidade = document.getElementById('valorUmidadeAtual');         // Span/div da umidade
+const canvas = document.getElementById('graficoTemperatura');                       // Canvas para o grafico Chart.js
+const ctx = canvas ? canvas.getContext('2d') : null;                                // Contexto 2D do canvas (para desenhar)
 
-// ----- VARIÁVEIS GLOBAIS DO MÓDULO -----
-let graficoTemperatura = null;   // Instância do gráfico Chart.js
-let ws = null;                   // Conexão WebSocket
-let leiturasCache = [];          // Cache local das últimas leituras
+// ----- VARIAVEIS GLOBAIS -----
+let graficoTemperatura = null;   // Armazena a instancia atual do grafico Chart.js
+let ws = null;                   // Armazena a conexao WebSocket ativa
+let leiturasCache = [];          // Cache local com as ultimas 100 leituras recebidas
+let intervaloAPI = null;         // Referencia para o intervalo de atualizacao periodica (setInterval)
 
-// ----- FUNÇÕES AUXILIARES -----
+// ----- FUNCOES AUXILIARES -----
 
 /**
- * Formata uma data ISO para exibição no eixo X do gráfico.
- * @param {string} dataISO - Data no formato ISO 8601.
- * @returns {string} - Horário no formato HH:MM.
+ * Formata uma data no formato ISO 8601 para exibicao no eixo X do grafico.
+ * @param {string} dataISO - Data em formato ISO (ex: "2026-04-17T10:30:00")
+ * @returns {string} - Horario formatado como "HH:MM:SS"
  */
 const formatarHorario = (dataISO) => {
-    const data = new Date(dataISO);
-    return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const data = new Date(dataISO);                       // Converte a string ISO para objeto Date
+    return data.toLocaleTimeString('pt-BR', {             // Formata para horario brasileiro
+        hour: '2-digit',                                  // Hora com 2 digitos (ex: 09)
+        minute: '2-digit',                                // Minuto com 2 digitos (ex: 05)
+        second: '2-digit'                                 // Segundo com 2 digitos (ex: 30)
+    });
 };
 
-// ----- COMUNICAÇÃO COM A API REST (GET) -----
+// ----- API REST -----
 
 /**
- * Busca todas as leituras disponíveis via API REST.
- * @returns {Promise<Array>} - Array de leituras.
+ * Busca todas as leituras disponiveis no banco de dados via API REST.
+ * @returns {Promise<Array>} - Promise que resolve para um array de leituras
  */
 const buscarLeituras = async () => {
     try {
-        const resposta = await fetch(URL_API);
-        if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status}`);
-        return await resposta.json();
+        const resposta = await fetch(URL_API);            // Faz a requisicao GET para a API
+        if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status}`); // Lanca erro se status nao for 2xx
+        const dados = await resposta.json();               // Converte a resposta para JSON
+        console.log('Dados atualizados via API:', new Date().toLocaleTimeString(), '-', dados.length, 'registros');
+        return dados;                                      // Retorna o array de leituras
     } catch (erro) {
-        console.error('Falha ao buscar leituras:', erro);
-        return [];
+        console.error('Falha ao buscar leituras:', erro); // Loga o erro no console
+        return [];                                         // Retorna array vazio em caso de falha
     }
 };
 
-// ----- COMUNICAÇÃO VIA WEBSOCKET (TEMPO REAL) -----
+// ----- WEBSOCKET -----
 
 /**
- * Estabelece a conexão WebSocket com o servidor.
- * Em caso de queda, tenta reconectar automaticamente após 5 segundos.
+ * Estabelece a conexao WebSocket para receber atualizacoes em tempo real.
+ * Em caso de falha, tenta reconectar automaticamente apos 5 segundos.
  */
 const conectarWebSocket = () => {
     try {
-        ws = new WebSocket(URL_WS);
+        if (ws) ws.close();                               // Fecha conexao existente (se houver) antes de criar nova
+        
+        ws = new WebSocket(URL_WS);                       // Cria nova conexao WebSocket
 
-        ws.onopen = () => {
-            console.log('🟢 WebSocket conectado');
+        ws.onopen = () => {                               // Evento disparado quando a conexao e estabelecida
+            console.log('WebSocket conectado');
         };
 
-        ws.onmessage = (evento) => {
+        ws.onmessage = (evento) => {                      // Evento disparado quando uma mensagem e recebida
             try {
-                const novaLeitura = JSON.parse(evento.data);
-                console.log('📡 Nova leitura recebida via WebSocket:', novaLeitura);
-
-                // Adiciona a nova leitura ao cache, mantendo no máximo 100 registros
-                leiturasCache.push(novaLeitura);
-                if (leiturasCache.length > 100) {
-                    leiturasCache.shift();
+                const novaLeitura = JSON.parse(evento.data); // Converte a mensagem recebida (string JSON) para objeto
+                console.log('Nova leitura WebSocket:', new Date().toLocaleTimeString());
+                
+                leiturasCache.push(novaLeitura);           // Adiciona a nova leitura ao cache
+                if (leiturasCache.length > 100) {          // Limita o cache a 100 registros
+                    leiturasCache.shift();                 // Remove o registro mais antigo
                 }
 
-                atualizarInterface(leiturasCache);
+                atualizarInterface(leiturasCache);         // Atualiza a tela com os novos dados
             } catch (erro) {
-                console.error('Erro ao processar mensagem do WebSocket:', erro);
+                console.error('Erro WebSocket:', erro);
             }
         };
 
-        ws.onerror = (erro) => {
-            console.error('Erro no WebSocket:', erro);
+        ws.onerror = (erro) => {                          // Evento disparado quando ocorre um erro na conexao
+            console.error('Erro WebSocket:', erro);
         };
 
-        ws.onclose = () => {
-            console.log('🔴 WebSocket desconectado, tentando reconectar em 5 segundos...');
-            setTimeout(conectarWebSocket, 5000);
+        ws.onclose = () => {                              // Evento disparado quando a conexao e fechada
+            console.log('WebSocket fechado. Reconectando em 5s...');
+            setTimeout(conectarWebSocket, 5000);          // Tenta reconectar apos 5 segundos
         };
     } catch (erro) {
         console.error('Erro ao criar WebSocket:', erro);
     }
 };
 
-// ----- ATUALIZAÇÃO DA INTERFACE (DOM) -----
+// ----- INTERFACE -----
 
 /**
- * Atualiza os elementos visuais com os dados mais recentes.
- * @param {Array} leituras - Lista de leituras (ordenadas ou não).
+ * Atualiza todos os elementos visuais do dashboard com os dados fornecidos.
+ * @param {Array} leituras - Array de objetos de leitura (temperatura, umidade, datahora)
  */
 const atualizarInterface = (leituras) => {
+    // Se nao ha leituras, exibe placeholder
     if (!leituras || leituras.length === 0) {
         if (elementoValorTemperatura) elementoValorTemperatura.textContent = '-- °C';
         if (elementoValorUmidade) elementoValorUmidade.textContent = '-- %';
-        return;
+        return;                                           // Sai da funcao
     }
 
-    // Ordena cronologicamente para o gráfico
+    // Ordena as leituras por data/hora (crescente) para o grafico
     const leiturasOrdenadas = [...leituras].sort((a, b) => new Date(a.datahora) - new Date(b.datahora));
-
-    // Última leitura (a mais recente após ordenação)
+    
+    // A ultima leitura (mais recente) fica no final do array ordenado
     const ultima = leiturasOrdenadas[leiturasOrdenadas.length - 1];
 
+    // Atualiza os valores exibidos de temperatura e umidade
     if (elementoValorTemperatura) {
         elementoValorTemperatura.textContent = `${parseFloat(ultima.temperatura).toFixed(1)} °C`;
     }
@@ -124,41 +138,91 @@ const atualizarInterface = (leituras) => {
         elementoValorUmidade.textContent = `${parseFloat(ultima.umidade).toFixed(1)} %`;
     }
 
-    // Atualiza o gráfico (somente se o canvas existir)
-    if (ctx) {
-        const rotulos = leiturasOrdenadas.map(l => formatarHorario(l.datahora));
-        const valoresTemperatura = leiturasOrdenadas.map(l => parseFloat(l.temperatura));
+    // Atualiza o indicador de "ultima atualizacao" (se existir no HTML)
+    const spanAtualizacao = document.getElementById('ultimaAtualizacao');
+    if (spanAtualizacao) {
+        spanAtualizacao.textContent = new Date().toLocaleTimeString('pt-BR');
+    }
 
+    // Atualiza o grafico Chart.js (apenas se o canvas existir)
+    if (ctx) {
+        // Prepara os dados para o grafico
+        const rotulos = leiturasOrdenadas.map(l => formatarHorario(l.datahora));      // Horarios para eixo X
+        const valoresTemperatura = leiturasOrdenadas.map(l => parseFloat(l.temperatura)); // Valores de temperatura
+        const valoresUmidade = leiturasOrdenadas.map(l => parseFloat(l.umidade));         // Valores de umidade
+
+        // Destroi o grafico anterior (se existir) para recria-lo com novos dados
         if (graficoTemperatura) graficoTemperatura.destroy();
 
+        // Cria um novo grafico Chart.js
         graficoTemperatura = new Chart(ctx, {
-            type: 'line',
+            type: 'line',                                 // Tipo: grafico de linha
             data: {
-                labels: rotulos,
-                datasets: [{
-                    label: 'Temperatura (°C)',
-                    data: valoresTemperatura,
-                    borderColor: '#f97316',
-                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.2,
-                    fill: true
-                }]
+                labels: rotulos,                          // Rótulos do eixo X (horarios)
+                datasets: [
+                    {
+                        label: 'Temperatura (°C)',        // Legenda da serie
+                        data: valoresTemperatura,         // Dados da temperatura
+                        borderColor: '#f97316',           // Cor da linha (laranja)
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)', // Cor de preenchimento (transparente)
+                        borderWidth: 2,                   // Espessura da linha
+                        tension: 0.2,                     // Suavizacao da curva
+                        fill: true,                       // Preenche area sob a linha
+                        yAxisID: 'y'                      // Usa o eixo Y esquerdo
+                    },
+                    {
+                        label: 'Umidade (%)',             // Legenda da segunda serie
+                        data: valoresUmidade,             // Dados da umidade
+                        borderColor: '#0ea5e9',           // Cor da linha (azul)
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)', // Cor de preenchimento
+                        borderWidth: 2,                   // Espessura da linha
+                        tension: 0.2,                     // Suavizacao da curva
+                        fill: true,                       // Preenche area sob a linha
+                        yAxisID: 'y1'                     // Usa o eixo Y direito
+                    }
+                ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                responsive: true,                         // Grafico se adapta ao tamanho do container
+                maintainAspectRatio: false,               // Nao mantem proporcao fixa
+                interaction: {
+                    mode: 'index',                        // Tooltip mostra dados de todas as series no mesmo ponto
+                    intersect: false
+                },
                 plugins: {
-                    legend: { display: false }
+                    legend: { 
+                        display: true,                    // Exibe a legenda
+                        position: 'top'                   // Posicao da legenda (topo)
+                    }
                 },
                 scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { maxRotation: 45, minRotation: 45 }
+                    x: { 
+                        grid: { display: false },         // Oculta as linhas de grade do eixo X
+                        ticks: { maxRotation: 45, minRotation: 45 } // Rotaciona os rotulos para caber
                     },
                     y: {
-                        beginAtZero: false,
-                        grid: { color: '#e2e8f0' }
+                        type: 'linear',                   // Eixo linear
+                        display: true,                    // Exibe o eixo Y esquerdo
+                        position: 'left',                 // Posicionado a esquerda
+                        title: {
+                            display: true,                // Exibe titulo do eixo
+                            text: 'Temperatura (°C)'
+                        },
+                        beginAtZero: false,               // Nao comeca necessariamente do zero
+                        grid: { color: '#e2e8f0' }        // Cor das linhas de grade
+                    },
+                    y1: {
+                        type: 'linear',                   // Eixo linear
+                        display: true,                    // Exibe o eixo Y direito
+                        position: 'right',                // Posicionado a direita
+                        title: {
+                            display: true,                // Exibe titulo do eixo
+                            text: 'Umidade (%)'
+                        },
+                        beginAtZero: false,               // Nao comeca necessariamente do zero
+                        min: 0,                           // Valor minimo 0%
+                        max: 100,                         // Valor maximo 100%
+                        grid: { drawOnChartArea: false }  // Nao desenha linhas de grade duplicadas
                     }
                 }
             }
@@ -166,36 +230,69 @@ const atualizarInterface = (leituras) => {
     }
 };
 
-// ----- INICIALIZAÇÃO DO DASHBOARD -----
+// ----- ATUALIZACAO PERIODICA -----
 
 /**
- * Carrega os dados iniciais via API REST e atualiza a interface.
+ * Inicia o intervalo que atualiza os dados via API REST a cada INTERVALO_ATUALIZACAO.
  */
-const carregarDashboard = async () => {
-    if (elementoValorTemperatura) elementoValorTemperatura.textContent = 'Carregando...';
-    if (elementoValorUmidade) elementoValorUmidade.textContent = 'Carregando...';
-
-    leiturasCache = await buscarLeituras();
-    atualizarInterface(leiturasCache);
+const iniciarAtualizacaoPeriodica = () => {
+    if (intervaloAPI) clearInterval(intervaloAPI);       // Limpa intervalo anterior (se existir)
+    
+    intervaloAPI = setInterval(async () => {             // Cria novo intervalo
+        console.log('Atualizando via API...');
+        leiturasCache = await buscarLeituras();          // Busca dados frescos da API
+        atualizarInterface(leiturasCache);               // Atualiza a tela
+    }, INTERVALO_ATUALIZACAO);                           // Repete a cada 5 segundos
 };
 
 /**
- * Verifica se há um usuário logado; caso contrário, redireciona para o login.
+ * Para o intervalo de atualizacao periodica.
+ */
+const pararAtualizacaoPeriodica = () => {
+    if (intervaloAPI) {
+        clearInterval(intervaloAPI);                     // Cancela o intervalo
+        intervaloAPI = null;                             // Limpa a referencia
+    }
+};
+
+// ----- INICIALIZACAO -----
+
+/**
+ * Carrega os dados iniciais do dashboard via API REST.
+ */
+const carregarDashboard = async () => {
+    // Exibe "Carregando..." enquanto os dados sao buscados
+    if (elementoValorTemperatura) elementoValorTemperatura.textContent = 'Carregando...';
+    if (elementoValorUmidade) elementoValorUmidade.textContent = 'Carregando...';
+
+    leiturasCache = await buscarLeituras();              // Busca dados iniciais
+    atualizarInterface(leiturasCache);                   // Exibe na tela
+};
+
+/**
+ * Verifica se o usuario esta autenticado.
+ * Redireciona para a pagina de login se nao estiver.
  */
 const verificarAutenticacao = () => {
-    const usuarioLogado = localStorage.getItem('usuarioLogado');
+    const usuarioLogado = localStorage.getItem('usuarioLogado'); // Verifica localStorage
     if (!usuarioLogado) {
-        window.location.href = '../index.html';
+        window.location.href = '../index.html';          // Redireciona para login
     }
 };
 
 // ----- PONTO DE ENTRADA -----
+// Este bloco executa assim que o DOM estiver completamente carregado
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📊 Dashboard inicializado');
-    verificarAutenticacao();
-    carregarDashboard();
-    conectarWebSocket();
+    console.log('Dashboard inicializado - Atualizacao a cada 5 segundos');
+    verificarAutenticacao();                             // 1. Verifica se usuario esta logado
+    carregarDashboard();                                 // 2. Carrega dados iniciais
+    conectarWebSocket();                                 // 3. Conecta WebSocket para tempo real
+    iniciarAtualizacaoPeriodica();                       // 4. Inicia atualizacao periodica a cada 5s
+});
 
-    // Fallback: atualização periódica via API a cada 30 segundos
-    setInterval(carregarDashboard, 30000);
+// ----- LIMPEZA AO SAIR DA PAGINA -----
+// Executa quando o usuario fecha a aba/navegador ou navega para outra pagina
+window.addEventListener('beforeunload', () => {
+    pararAtualizacaoPeriodica();                         // Para o intervalo de atualizacao
+    if (ws) ws.close();                                  // Fecha a conexao WebSocket
 });
