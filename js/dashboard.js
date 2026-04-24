@@ -7,15 +7,14 @@
  * - Grafico de evolucao da temperatura e umidade (Chart.js).
  * 
  * Comunicacao com backend:
- * - API REST (GET) - atualizacao a cada 5 segundos
- * - WebSocket - atualizacao instantanea
+ * - API REST (GET) - atualizacao a cada 10 segundos
+
  * ============================================================
  */
 
 // ----- CONFIGURACOES -----
-const URL_API = 'http://10.110.12.81:1880/api/leituras'; // Endpoint para buscar leituras via HTTP
-const URL_WS = 'ws://10.110.12.81:1880/ws/leituras';     // Endpoint para receber leituras via WebSocket
-const INTERVALO_ATUALIZACAO = 10000;                       // Intervalo de 5 segundos (em milissegundos) para atualizacao periodica
+const URL_API = 'http://10.110.12.71:1880/api/leituras'; // Endpoint para buscar leituras via HTTP
+const INTERVALO_ATUALIZACAO = 10000;                       // Intervalo de 10 segundos (em milissegundos) para atualizacao periodica
 
 // ----- ELEMENTOS DO DOM -----
 // Obtem referencias para os elementos HTML que serao atualizados
@@ -26,7 +25,6 @@ const ctx = canvas ? canvas.getContext('2d') : null;                            
 
 // ----- VARIAVEIS GLOBAIS -----
 let graficoTemperatura = null;   // Armazena a instancia atual do grafico Chart.js
-let ws = null;                   // Armazena a conexao WebSocket ativa
 let leiturasCache = [];          // Cache local com as ultimas 100 leituras recebidas
 let intervaloAPI = null;         // Referencia para o intervalo de atualizacao periodica (setInterval)
 
@@ -62,51 +60,6 @@ const buscarLeituras = async () => {
     } catch (erro) {
         console.error('Falha ao buscar leituras:', erro); // Loga o erro no console
         return [];                                         // Retorna array vazio em caso de falha
-    }
-};
-
-// ----- WEBSOCKET -----
-
-/**
- * Estabelece a conexao WebSocket para receber atualizacoes em tempo real.
- * Em caso de falha, tenta reconectar automaticamente apos 5 segundos.
- */
-const conectarWebSocket = () => {
-    try {
-        if (ws) ws.close();                               // Fecha conexao existente (se houver) antes de criar nova
-        
-        ws = new WebSocket(URL_WS);                       // Cria nova conexao WebSocket
-
-        ws.onopen = () => {                               // Evento disparado quando a conexao e estabelecida
-            console.log('WebSocket conectado');
-        };
-
-        ws.onmessage = (evento) => {                      // Evento disparado quando uma mensagem e recebida
-            try {
-                const novaLeitura = JSON.parse(evento.data); // Converte a mensagem recebida (string JSON) para objeto
-                console.log('Nova leitura WebSocket:', new Date().toLocaleTimeString());
-                
-                leiturasCache.push(novaLeitura);           // Adiciona a nova leitura ao cache
-                if (leiturasCache.length > 100) {          // Limita o cache a 100 registros
-                    leiturasCache.shift();                 // Remove o registro mais antigo
-                }
-
-                atualizarInterface(leiturasCache);         // Atualiza a tela com os novos dados
-            } catch (erro) {
-                console.error('Erro WebSocket:', erro);
-            }
-        };
-
-        ws.onerror = (erro) => {                          // Evento disparado quando ocorre um erro na conexao
-            console.error('Erro WebSocket:', erro);
-        };
-
-        ws.onclose = () => {                              // Evento disparado quando a conexao e fechada
-            console.log('WebSocket fechado. Reconectando em 5s...');
-            setTimeout(conectarWebSocket, 5000);          // Tenta reconectar apos 5 segundos
-        };
-    } catch (erro) {
-        console.error('Erro ao criar WebSocket:', erro);
     }
 };
 
@@ -283,16 +236,9 @@ const verificarAutenticacao = () => {
 // ----- PONTO DE ENTRADA -----
 // Este bloco executa assim que o DOM estiver completamente carregado
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Dashboard inicializado - Atualizacao a cada 5 segundos');
+    console.log('Dashboard inicializado - Atualizacao a cada 10 segundos');
     verificarAutenticacao();                             // 1. Verifica se usuario esta logado
     carregarDashboard();                                 // 2. Carrega dados iniciais
-    conectarWebSocket();                                 // 3. Conecta WebSocket para tempo real
-    iniciarAtualizacaoPeriodica();                       // 4. Inicia atualizacao periodica a cada 5s
-});
 
-// ----- LIMPEZA AO SAIR DA PAGINA -----
-// Executa quando o usuario fecha a aba/navegador ou navega para outra pagina
-window.addEventListener('beforeunload', () => {
-    pararAtualizacaoPeriodica();                         // Para o intervalo de atualizacao
-    if (ws) ws.close();                                  // Fecha a conexao WebSocket
+    iniciarAtualizacaoPeriodica();                       // 4. Inicia atualizacao periodica a cada 5s
 });
