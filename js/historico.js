@@ -1,189 +1,198 @@
-/**
- * Módulo de Histórico
- * 
- * Exibe uma tabela com todas as leituras armazenadas no banco de dados.
- * Permite filtrar por período (data/hora inicial e final).
- */
+// URL da API
+const URL_API = 'http://10.110.12.71:1880/api/leituras';
 
-// ----- CONFIGURAÇÕES -----
-const URL_API = 'http://10.110.12.73:1880/api/leituras';
+// Tempo de atualização automática (10 segundos)
+const TEMPO_ATUALIZACAO = 10000;
 
-// ----- ELEMENTOS DO DOM -----
+
+// ----------------------------------------------------------
+// ELEMENTOS DO DOM
+// ----------------------------------------------------------
+
 const corpoTabela = document.getElementById('corpoTabelaHistorico');
-const formularioFiltros = document.getElementById('formularioFiltros');
-const campoDataInicio = document.getElementById('dataInicio');
-const campoDataFim = document.getElementById('dataFim');
-const botaoLimpar = document.getElementById('botaoLimparFiltros');
 
-// ----- ESTADO LOCAL -----
-let todasLeituras = []; // Cache de todas as leituras carregadas
 
-// ----- FUNÇÕES AUXILIARES -----
+// ----------------------------------------------------------
+// ESTADO LOCAL
+// ----------------------------------------------------------
+
+let todasLeituras = [];
+
+
+// ----------------------------------------------------------
+// FUNÇÕES AUXILIARES
+// ----------------------------------------------------------
 
 /**
- * Formata uma data ISO para exibição na tabela.
- * @param {string} dataISO - Data no formato ISO 8601.
- * @returns {string} - Data/hora no padrão brasileiro.
+ * Formata data ISO para padrão brasileiro
  */
 const formatarDataHora = (dataISO) => {
     const data = new Date(dataISO);
     return data.toLocaleString('pt-BR');
 };
 
-// ----- COMUNICAÇÃO COM A API -----
 
 /**
- * Busca todas as leituras da API.
- * @returns {Promise<Array>} - Array de leituras.
+ * Exibe mensagem na tabela
+ */
+const mostrarMensagemTabela = (mensagem) => {
+    corpoTabela.innerHTML = `
+        <tr class="linha-placeholder">
+            <td colspan="4">${mensagem}</td>
+        </tr>
+    `;
+};
+
+
+// ----------------------------------------------------------
+// API
+// ----------------------------------------------------------
+
+/**
+ * Busca todas as leituras
  */
 const buscarTodasLeituras = async () => {
     try {
-        const resposta = await fetch(URL_API);
-        if (!resposta.ok) throw new Error(`Erro HTTP ${resposta.status}`);
+        const resposta = await fetch(URL_API, {
+            cache: 'no-store'
+        });
+
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP ${resposta.status}`);
+        }
+
         const dados = await resposta.json();
-        console.log(`📋 ${dados.length} leituras carregadas`);
+
+        console.log(`Leituras carregadas: ${dados.length}`);
+
         return dados;
+
     } catch (erro) {
-        console.error('Erro ao buscar histórico:', erro);
+        console.error('Erro ao buscar leituras:', erro);
+        mostrarMensagemTabela('Erro ao carregar dados.');
         return [];
     }
 };
 
-// ----- RENDERIZAÇÃO DA TABELA -----
+
+// ----------------------------------------------------------
+// TABELA
+// ----------------------------------------------------------
 
 /**
- * Preenche a tabela com as leituras fornecidas.
- * @param {Array} leituras - Lista de leituras a serem exibidas.
+ * Renderiza tabela
  */
 const renderizarTabela = (leituras) => {
+
     corpoTabela.innerHTML = '';
 
     if (!leituras || leituras.length === 0) {
-        const linhaVazia = document.createElement('tr');
-        linhaVazia.classList.add('linha-placeholder');
-        linhaVazia.innerHTML = `<td colspan="4">Nenhuma leitura encontrada.</td>`;
-        corpoTabela.appendChild(linhaVazia);
+        mostrarMensagemTabela('Nenhuma leitura encontrada.');
         return;
     }
 
-    // Ordena da mais recente para a mais antiga
-    const leiturasOrdenadas = [...leituras].sort((a, b) => new Date(b.datahora) - new Date(a.datahora));
+    // Ordena da mais recente para mais antiga
+    const ordenadas = [...leituras].sort((a, b) => {
+        return new Date(b.datahora) - new Date(a.datahora);
+    });
 
-    leiturasOrdenadas.forEach(leitura => {
+    ordenadas.forEach((leitura) => {
+
         const linha = document.createElement('tr');
 
-        // Coluna ID
-        const celulaId = document.createElement('td');
-        celulaId.textContent = leitura.id ?? '-';
+        // ID
+        const tdId = document.createElement('td');
+        tdId.textContent = leitura.id ?? '-';
 
-        // Coluna Temperatura
-        const celulaTemperatura = document.createElement('td');
-        const temp = parseFloat(leitura.temperatura);
-        celulaTemperatura.textContent = `${temp.toFixed(1)} °C`;
+        // Temperatura
+        const tdTemp = document.createElement('td');
+        const temp = parseFloat(leitura.temperatura || 0);
+        tdTemp.textContent = `${temp.toFixed(1)} °C`;
 
-        // Coluna Umidade
-        const celulaUmidade = document.createElement('td');
-        const umid = parseFloat(leitura.umidade);
-        celulaUmidade.textContent = `${umid.toFixed(1)} %`;
+        // Umidade
+        const tdUmidade = document.createElement('td');
+        const umidade = parseFloat(leitura.umidade || 0);
+        tdUmidade.textContent = `${umidade.toFixed(1)} %`;
 
-        // Coluna Data/Hora
-        const celulaDataHora = document.createElement('td');
-        celulaDataHora.textContent = formatarDataHora(leitura.datahora);
+        // Data Hora
+        const tdData = document.createElement('td');
+        tdData.textContent = formatarDataHora(leitura.datahora);
 
-        linha.appendChild(celulaId);
-        linha.appendChild(celulaTemperatura);
-        linha.appendChild(celulaUmidade);
-        linha.appendChild(celulaDataHora);
+        linha.appendChild(tdId);
+        linha.appendChild(tdTemp);
+        linha.appendChild(tdUmidade);
+        linha.appendChild(tdData);
 
         corpoTabela.appendChild(linha);
     });
 };
 
-// ----- FILTROS -----
+
+// ----------------------------------------------------------
+// AUTENTICAÇÃO
+// ----------------------------------------------------------
 
 /**
- * Aplica os filtros de data/hora sobre o cache local.
- * @returns {Array} - Leituras que atendem ao critério de filtro.
- */
-const filtrarLeituras = () => {
-    const inicio = campoDataInicio.value;
-    const fim = campoDataFim.value;
-
-    if (!inicio && !fim) return todasLeituras;
-
-    return todasLeituras.filter(leitura => {
-        const dataLeitura = new Date(leitura.datahora);
-        let dentro = true;
-
-        if (inicio) {
-            dentro = dentro && dataLeitura >= new Date(inicio);
-        }
-        if (fim) {
-            const dataFimAjustada = new Date(fim);
-            dataFimAjustada.setHours(23, 59, 59, 999);
-            dentro = dentro && dataLeitura <= dataFimAjustada;
-        }
-        return dentro;
-    });
-};
-
-/**
- * Atualiza a tabela com os dados filtrados.
- */
-const aplicarFiltro = () => {
-    const filtradas = filtrarLeituras();
-    renderizarTabela(filtradas);
-};
-
-/**
- * Remove os filtros e exibe todas as leituras novamente.
- */
-const limparFiltros = () => {
-    campoDataInicio.value = '';
-    campoDataFim.value = '';
-    renderizarTabela(todasLeituras);
-};
-
-// ----- INICIALIZAÇÃO -----
-
-/**
- * Carrega os dados e prepara a tabela.
- */
-const inicializarHistorico = async () => {
-    corpoTabela.innerHTML = `<tr class="linha-placeholder"><td colspan="4">Carregando dados...</td></tr>`;
-    todasLeituras = await buscarTodasLeituras();
-    renderizarTabela(todasLeituras);
-};
-
-/**
- * Verifica se o usuário está autenticado.
+ * Verifica login
  */
 const verificarAutenticacao = () => {
+
     const usuarioLogado = localStorage.getItem('usuarioLogado');
+
     if (!usuarioLogado) {
         window.location.href = '../index.html';
     }
 };
 
-// ----- REGISTRO DE EVENTOS E INICIALIZAÇÃO -----
+
+// ----------------------------------------------------------
+// INICIALIZAÇÃO
+// ----------------------------------------------------------
+
+/**
+ * Carrega histórico inicial
+ */
+const inicializarHistorico = async () => {
+
+    mostrarMensagemTabela('Carregando dados...');
+
+    todasLeituras = await buscarTodasLeituras();
+
+    renderizarTabela(todasLeituras);
+};
+
+
+// ----------------------------------------------------------
+// ATUALIZAÇÃO AUTOMÁTICA
+// ----------------------------------------------------------
+
+/**
+ * Atualiza tabela automaticamente
+ */
+const iniciarAtualizacaoAutomatica = () => {
+
+    setInterval(async () => {
+
+        console.log('Atualizando histórico...');
+
+        todasLeituras = await buscarTodasLeituras();
+
+        renderizarTabela(todasLeituras);
+
+    }, TEMPO_ATUALIZACAO);
+};
+
+
+// ----------------------------------------------------------
+// EXECUÇÃO
+// ----------------------------------------------------------
+
 document.addEventListener('DOMContentLoaded', () => {
+
     verificarAutenticacao();
+
     inicializarHistorico();
 
-    if (formularioFiltros) {
-        formularioFiltros.addEventListener('submit', (evento) => {
-            evento.preventDefault();
-            aplicarFiltro();
-        });
-    }
+    iniciarAtualizacaoAutomatica();
 
-    if (botaoLimpar) {
-        botaoLimpar.addEventListener('click', limparFiltros);
-    }
-
-    // Atualização automática a cada 10 segundos
-    setInterval(async () => {
-        todasLeituras = await buscarTodasLeituras();
-        aplicarFiltro(); // Reaplica o filtro ativo (se houver)
-    }, 10000);
 });
